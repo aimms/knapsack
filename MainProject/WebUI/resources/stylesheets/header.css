@@ -1,7 +1,7 @@
 /*Add logo*/
 .theme-aimms header.tag-application .pages > .app-name::before {
   content: " ";
-  background: url(img/budgeting.png) no-repeat center/contain;
+  background: url(img/knapsack-logo.png) no-repeat center/contain;
   float: left;
   width: 30px; /*image size*/
   height: 30px; 

@@ -19,99 +19,166 @@ Model Main_CarSelection {
 				}
 			}
 			Quantity SI_Mass {
-				BaseUnit: kg;
+				BaseUnit: lb;
+				Conversions: {
+					kg -> lb : # -> # * 2.204622476,
+					oz -> lb : # -> # * 0.06249998898
+				}
 				Comment: "Expresses the value for the amount of matter.";
 			}
 			Quantity q_monetary {
 				BaseUnit: $;
 			}
+			Quantity SI_Unitless {
+				BaseUnit: -;
+				Conversions: % -> - : # -> # / 100;
+				Comment: "Expresses a dimensionless value.";
+			}
 		}
 		Section Inputs {
-			Set s_producers {
-				Text: "The set of all producers";
-				Index: i_p, i_p1;
+			Procedure pr_dataGenerator {
+				Body: {
+					empty p_itemValue, p_itemWeight, p_itemBound;
+					
+					p_itemValue(i_item) := uniform(0,200)*1[$];
+					p_itemWeight(i_item) := uniform(0[lb],p_maxWeightKnapsack/3);
+					p_itemBound(i_item) := ceil(uniform(0,10));
+				}
 			}
-			Set s_contracts {
-				Text: "The set of all contracts";
-				Index: i_c, i_c1;
-				Parameter: ep_contract;
+			Set s_items {
+				Index: i_item;
+				Parameter: ep_item;
+				Definition: ElementRange(1, p_maxItems, prefix:"item-", fill:1);
 			}
-			Parameter p_availableCapacity {
-				IndexDomain: (i_p);
-				Text: "Available capacity for producer p";
-				Unit: kg;
+			Parameter p_maxItems {
+				Text: "No. of items";
+				Range: integer;
+				InitialData: 14;
 			}
-			Parameter p_productionCost {
-				IndexDomain: (i_p,i_c);
-				Text: "Unit cost for delivery by producer p for contract c";
-				Unit: $/kg;
+			Parameter p_itemValue {
+				IndexDomain: (i_item);
+				Unit: $;
 			}
-			Parameter p_minimalDelivery {
-				IndexDomain: (i_p);
-				Text: "Minimal delivery size for producer p";
-				Unit: kg;
+			Parameter p_itemWeight {
+				IndexDomain: (i_item);
+				Unit: lb;
 			}
-			Parameter p_contractSize {
-				IndexDomain: (i_c);
-				Text: "Size of contract c";
-				Unit: kg;
+			Parameter p_maxWeightKnapsack {
+				Text: "Max. weight knapsack";
+				Unit: lb;
+				InitialData: 60;
 			}
-			Parameter p_minimalNumberofContributors {
-				IndexDomain: (i_c);
-				Text: "Minimal number of producers that delivery to a contract";
+			Parameter p_itemRangeMin {
+				IndexDomain: (i_item);
+				Range: integer;
+			}
+			Parameter p_itemRangeMax {
+				IndexDomain: (i_item);
+				Range: integer;
+			}
+			Parameter p_itemBound {
+				IndexDomain: (i_item);
+				Text: "No. of copies that is allowed";
 				Range: integer;
 			}
 		}
 		Section Math_Model {
-			Variable v_totalCost {
-				Text: "Total cost of all deliveries";
+			Variable v_knapsackItems {
+				IndexDomain: i_item;
+				Text: "Item i is placed in knapsack";
+				Range: {
+					{p_itemRangeMin(i_item)..p_itemRangeMax(i_item)}
+				}
+			}
+			Variable v_knapsackValue {
+				IndexDomain: i_item;
 				Unit: $;
-				Definition: sum((i_p,i_c), p_productionCost(i_p,i_c) * v_generation(i_p,i_c));
+				Definition: {
+					v_knapsackItems(i_item) 
+					* p_itemValue(i_item)
+				}
 			}
-			Variable v_generation {
-				IndexDomain: (i_p,i_c);
-				Text: "Amount of commodity delivered by producers p for contract c";
-				Range: [p_minimalDelivery(i_p), 10000);
-				Unit: kg;
-				Property: SemiContinuous;
+			Variable v_knapsackTotalValue {
+				Unit: $;
+				Definition: sum(i_item, v_knapsackItems(i_item) * p_itemValue(i_item));
 			}
-			Variable v_generationIncidence {
-				IndexDomain: (i_p,i_c);
-				Text: "Producers p produce for contract c";
-				Range: binary;
+			Constraint c_limitKnapsackWeight {
+				Unit: lb;
+				Definition: sum(i_item, v_knapsackItems(i_item) * p_itemWeight(i_item)) <= p_maxWeightKnapsack;
 			}
-			Constraint c_capacity {
-				IndexDomain: (i_p);
-				Text: "Production capacity for producer p";
-				Unit: kg;
-				Definition: sum(i_c, v_generation(i_p,i_c)) <= p_availableCapacity(i_p);
-			}
-			Constraint c_contractFullfillment {
-				IndexDomain: (i_c);
-				Text: "The demand for contract c is met";
-				Unit: kg;
-				Definition: sum(i_p, v_generation(i_p,i_c)) >= p_contractSize(i_c);
-			}
-			Constraint c_contractContribution {
-				IndexDomain: (i_c);
-				Text: "Mimimal number of contributors to contract c";
-				Definition: sum(i_p, v_generationIncidence(i_p,i_c)) >= p_minimalNumberofContributors(i_c);
-			}
-			Constraint c_generationIncidenceDetermination {
-				IndexDomain: (i_p,i_c);
-				Text: "Determine if producer p delivers to contract c";
-				Unit: kg;
-				Definition: v_generation(i_p,i_c) >= p_minimalDelivery(i_p) * v_generationIncidence(i_p,i_c);
-			}
-			MathematicalProgram mp_contractAllocation {
-				Objective: v_totalCost;
-				Direction: minimize;
-				Constraints: AllConstraints;
-				Variables: AllVariables;
+			MathematicalProgram mp_knapsackModel {
+				Objective: v_knapsackTotalValue;
+				Direction: maximize;
 				Type: MIP;
 			}
+			DeclarationSection Model_Information {
+				ElementParameter ep_programStatus {
+					Range: AllSolutionStates;
+					webui::FlagsIdentifier: sp_readOnlyFlag;
+				}
+				Parameter p_gap {
+					Unit: %;
+					webui::FlagsIdentifier: sp_readOnlyFlag;
+				}
+				Parameter p_numberOfConstraints {
+					webui::FlagsIdentifier: sp_readOnlyFlag;
+				}
+				Parameter p_numberOfVariables {
+					webui::FlagsIdentifier: sp_readOnlyFlag;
+				}
+				Parameter p_solutionTime {
+					Unit: s;
+					webui::FlagsIdentifier: sp_readOnlyFlag;
+				}
+			}
+			Procedure pr_solveKnapsackModel {
+				Body: {
+					/* Standard model allows at most 1 copy of each item */
+					
+					p_itemRangeMin(i_item) := 0;
+					p_itemRangeMax(i_item) := 1;
+					
+					solve mp_knapsackModel;
+					
+					pr_modelInformation;
+				}
+			}
+			Procedure pr_solveKnapsackModelUnBounded {
+				Body: {
+					/* Standard model allows at most a specific no of copies of each item */
+					
+					p_itemRangeMin(i_item) := 0;
+					p_itemRangeMax(i_item) := inf;
+					
+					solve mp_knapsackModel;
+					
+					pr_modelInformation;
+				}
+			}
+			Procedure pr_solveKnapsackModelBounded {
+				Body: {
+					/* Standard model allows at most a specific no of copies of each item */
+					
+					p_itemRangeMin(i_item) := 0;
+					p_itemRangeMax(i_item) := p_itemBound(i_item);
+					
+					solve mp_knapsackModel;
+					
+					pr_modelInformation;
+				}
+			}
+			Procedure pr_modelInformation {
+				Body: {
+					empty Model_Information;
+					
+					ep_programStatus := mp_knapsackModel.ProgramStatus;
+					p_gap := abs(1 - (mp_knapsackModel.Objective/$mp_knapsackModel.BestBound));
+					p_solutionTime := mp_knapsackModel.SolutionTime;
+					p_numberOfConstraints := mp_knapsackModel.NumberOfConstraints;
+					p_numberOfVariables := mp_knapsackModel.NumberOfVariables;
+				}
+			}
 		}
-		Section Outputs;
 	}
 	Section UI_Declarations {
 		StringParameter sp_def_caseName {
@@ -123,63 +190,8 @@ Model Main_CarSelection {
 		StringParameter sp_problemDescription {
 			Definition: FileRead("Description.txt");
 		}
-		ElementParameter ep_actualProducer {
-			Text: "Element parameter used to link Gantt chart with message";
-			Range: s_producers;
-		}
-		ElementParameter ep_actualContract {
-			Text: "Element parameter used to link Gantt chart with message";
-			Range: s_contracts;
-		}
-		ElementParameter GenerationColor {
-			IndexDomain: (i_p,i_c);
-			Text: "Display message in color, based on the amount of generation in relation to the bounds";
-			Range: AllColors;
-			Definition: {
-				if sum(i_c1, v_generation(i_p,i_c1)) = p_availableCapacity(i_p) and v_generation(i_p,i_c) = p_minimalDelivery(i_p) then
-					    'red'
-				elseif  sum(i_c1, v_generation(i_p,i_c1)) = p_availableCapacity(i_p) then
-					    'magenta'
-				elseif  v_generation(i_p,i_c) = p_minimalDelivery(i_p) then
-					    'blue'
-				else
-					    'Black'
-				endif;
-			}
-		}
-		ElementParameter SelectionColorContract {
-			IndexDomain: (i_c);
-			Text: "Color of selected contract in the interface";
-			Range: AllColors;
-			Definition: {
-				if i_c = ep_actualContract then
-					'Blue'
-				else
-					'Black'
-				endif
-			}
-		}
-		ElementParameter SelectionColorProducer {
-			IndexDomain: (i_p);
-			Text: "Color of selected producer in the interface";
-			Range: AllColors;
-			Definition: {
-				if i_p = ep_actualProducer then
-					'blue'
-				else
-					'Black'
-				endif
-			}
-		}
-		StringParameter MessageString {
-			Text: "A message describing the production of a certain producer for a certain contract";
-			Definition: {
-				FormatString("Total delivery by producer %e for contract %e is %n",
-				ep_actualProducer, ep_actualContract, v_generation(ep_actualProducer, ep_actualContract) )
-			}
-		}
-		ElementParameter ACase {
-			Range: AllCases;
+		Parameter p_itemFilter {
+			IndexDomain: i_item;
 		}
 		Section Workflow {
 			StringParameter sp_myWorkflows {
@@ -196,15 +208,15 @@ Model Main_CarSelection {
 					  ( 1, 2, icon              ) : "aimms-lamp5"        ,  ( 1, 2, pageId            ) : "problem_description",
 					  ( 1, 2, tooltip           ) : "Problem Description",  ( 1, 2, workflowPageState ) : "Active"             ,
 					  ( 1, 2, pageDataState     ) : "Incomplete"         ,  ( 1, 2, redirectPageId    ) : "home"               ,
-					  ( 1, 3, displayText       ) : "Demo Page"          ,  ( 1, 3, icon              ) : "aimms-equalizer2"   ,
-					  ( 1, 3, pageId            ) : "inputs"             ,  ( 1, 3, tooltip           ) : "Demo Page"          ,
+					  ( 1, 3, displayText       ) : "Inputs"             ,  ( 1, 3, icon              ) : "aimms-equalizer2"   ,
+					  ( 1, 3, pageId            ) : "inputs"             ,  ( 1, 3, tooltip           ) : "Inputs"             ,
 					  ( 1, 3, workflowPageState ) : "Active"             ,  ( 1, 3, pageDataState     ) : "Incomplete"         ,
-					  ( 1, 3, redirectPageId    ) : "home"                }
+					  ( 1, 3, redirectPageId    ) : "home"               ,  ( 1, 4, displayText       ) : "Results"            ,
+					  ( 1, 4, icon              ) : "aimms-target"       ,  ( 1, 4, pageId            ) : "results"            ,
+					  ( 1, 4, tooltip           ) : "Results"            ,  ( 1, 4, workflowPageState ) : "Active"             ,
+					  ( 1, 4, pageDataState     ) : "Incomplete"         ,  ( 1, 4, redirectPageId    ) : "home"                }
 				}
 			}
-		}
-		Section SidePanel {
-			DeclarationSection DemoPage;
 		}
 		Section FlagsIdentifier {
 			StringParameter sp_readOnlyFlag {
@@ -213,11 +225,6 @@ Model Main_CarSelection {
 		}
 	}
 	Procedure MainInitialization {
-		Body: {
-			read from file "<prj>:NothWesternStates.txt";
-			ep_actualContract := first(i_c);
-			ep_actualProducer := first(i_p);
-		}
 		Comment: "Add initialization statements here that do NOT require any library being initialized already.";
 	}
 	Procedure PostMainInitialization {
@@ -226,11 +233,7 @@ Model Main_CarSelection {
 			or add statements that require the Data Management module to be initialized."
 		}
 	}
-	Procedure MainExecution {
-		Body: {
-			solve mp_contractAllocation;
-		}
-	}
+	Procedure MainExecution;
 	Procedure PreMainTermination {
 		Body: {
 			return DataManagementExit();

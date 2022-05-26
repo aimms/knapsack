@@ -12,4 +12,16 @@ This example introduces a knapsack problem. The example considers a data set of 
 
 In the classical knapsack problem, each item can be chosen only once. This example also considers variants of the problem in which the number of equal items is unlimited or limited to certain integers.
 
+The following WebUI features are used:
+
+- Text Widget
+- Image Widget
+- Workflow
+- Table Widget
+- Slider Widget
+- Scalar Widget
+- Button Widget
+- Compact Scalar Widget
+- Multiselect Widget
+
 _Keywords: 0-1 Knapsack, Knapsack, Integer Programming, Binary Integer Programming, Cover Inequalities, Network Object._

@@ -38,10 +38,17 @@
                 "name": "home",
                 "slug": "home",
                 "type": "pagev2-grid",
-                "children": []
+                "children": [
+                  {
+                    "name": "CRUD",
+                    "type": "pagev2-grid-dialog",
+                    "slug": "crud",
+                    "children": []
+                  }
+                ]
               },
               {
-                "name": "Problem Description",
+                "name": "Story",
                 "type": "pagev2-grid",
                 "slug": "problem_description",
                 "children": []
@@ -56,7 +63,14 @@
                 "name": "Results",
                 "type": "pagev2-grid",
                 "slug": "results",
-                "children": []
+                "children": [
+                  {
+                    "name": "Model Information",
+                    "type": "pagev2-grid-sidepanel",
+                    "slug": "model_information",
+                    "children": []
+                  }
+                ]
               }
             ]
           }
@@ -188,9 +202,9 @@
       "literal": {
         "componentName": "Grid",
         "props": {
-          "gridTemplateColumns": "0.4fr 0.4fr 0.2fr",
+          "gridTemplateColumns": "0.8fr 0.2fr",
           "gridTemplateRows": "1fr 1fr",
-          "gridTemplateAreas": "\"area-a area-b area-d\" \"area-c area-b area-d\" \"area-c area-b area-d\""
+          "gridTemplateAreas": "\"area-a area-b\" \"area-a area-b\""
         },
         "items": [
           {
@@ -208,28 +222,43 @@
               "name": "Area B",
               "gridAutoFlow": "column"
             }
-          },
-          {
-            "componentName": "WidgetArea",
-            "props": {
-              "gridArea": "area-c",
-              "name": "Area C",
-              "gridAutoFlow": "row"
-            }
-          },
-          {
-            "componentName": "WidgetArea",
-            "props": {
-              "gridArea": "area-d",
-              "name": "Area D",
-              "gridAutoFlow": "row"
-            }
           }
         ]
       }
     },
     "displayName": {
       "literal": "LayoutResults"
+    }
+  },
+  "pages/crud": {
+    "aimms.widget.type": {
+      "literal": "pagev2-grid-dialog"
+    },
+    "bindings": {
+      "literal": [
+        {
+          "widgetUri": "scl_addEditElement",
+          "gridArea": "area-a",
+          "dndId": "Unassigned widgetsscl_addEditElement0"
+        }
+      ]
+    },
+    "maxcolumns": {
+      "literal": 1
+    },
+    "maxrows": {
+      "literal": 1
+    },
+    "widgets": {
+      "literal": [
+        {
+          "uri": "scl_addEditElement",
+          "layoutInfo": {
+            "width": "2",
+            "height": "1"
+          }
+        }
+      ]
     }
   },
   "pages/home": {
@@ -347,13 +376,6 @@
           }
         },
         {
-          "uri": "scl_caseName",
-          "layoutInfo": {
-            "width": "2",
-            "height": "1"
-          }
-        },
-        {
           "uri": "btn_standardRun",
           "layoutInfo": {
             "width": "2",
@@ -376,6 +398,31 @@
         },
         {
           "uri": "btn_dataGenerator",
+          "layoutInfo": {
+            "width": "2",
+            "height": "1"
+          }
+        }
+      ]
+    }
+  },
+  "pages/model_information": {
+    "aimms.widget.type": {
+      "literal": "pagev2-grid-sidepanel"
+    },
+    "bindings": {
+      "literal": [
+        {
+          "widgetUri": "scl_modelInformation",
+          "gridArea": "area-a",
+          "dndId": "Unassigned widgetsscl_modelInformation0"
+        }
+      ]
+    },
+    "widgets": {
+      "literal": [
+        {
+          "uri": "scl_modelInformation",
           "layoutInfo": {
             "width": "2",
             "height": "1"
@@ -419,34 +466,46 @@
     "bindings": {
       "literal": [
         {
-          "widgetUri": "scl_optimizationResults",
-          "gridArea": "area-a",
-          "dndId": "Unassigned widgetsscl_optimizationResults2"
-        },
-        {
           "widgetUri": "tbl_knapsackItems",
-          "gridArea": "area-b",
+          "gridArea": "area-a",
           "dndId": "area-btbl_knapsackItems0"
         },
         {
           "widgetUri": "mslc_multiselectFilter",
-          "gridArea": "area-d",
-          "dndId": "area-dmslc_multiselectFilter1"
+          "gridArea": "area-b",
+          "dndId": "area-bmslc_multiselectFilter1"
         }
       ]
     },
     "layoutId": {
       "literal": "custom_ae8aa3ba-f894-467c-9e3e-6fccf57f8fce"
     },
+    "sidepanels": {
+      "aimms": {
+        "contents": [
+          "sp_resultsSidePanel"
+        ],
+        "slices": [
+          {
+            "identifier": "sp_resultsSidePanel",
+            "slice": [
+              {
+                "index": "webui::indexPageExtension",
+                "type": "free",
+                "value": "webui::indexPageExtension"
+              },
+              {
+                "index": "webui::indexSidePanelSpec",
+                "type": "free",
+                "value": "webui::indexSidePanelSpec"
+              }
+            ]
+          }
+        ]
+      }
+    },
     "widgets": {
       "literal": [
-        {
-          "uri": "scl_optimizationResults",
-          "layoutInfo": {
-            "width": "2",
-            "height": "1"
-          }
-        },
         {
           "uri": "tbl_knapsackItems",
           "layoutInfo": {
@@ -485,7 +544,7 @@
     "action": {
       "literal": {
         "type": "procedure",
-        "value": "pr_dataGenerator"
+        "value": "pr_randomizeData"
       }
     },
     "aimms.widget.type": {
@@ -565,17 +624,14 @@
       "literal": "Filter"
     }
   },
-  "widgets/scl_caseName": {
+  "widgets/scl_addEditElement": {
     "aimms.widget.type": {
       "literal": "scalar"
-    },
-    "compact": {
-      "literal": 1
     },
     "contents": {
       "aimms": {
         "contents": [
-          "sp_def_caseName"
+          "sp_addEditElement"
         ]
       }
     },
@@ -583,7 +639,7 @@
       "literal": 0
     },
     "name": {
-      "literal": "scl_caseName"
+      "literal": "scl_addEditElement"
     }
   },
   "widgets/scl_maxWeightKnapsack": {
@@ -604,7 +660,7 @@
       "literal": 1
     }
   },
-  "widgets/scl_optimizationResults": {
+  "widgets/scl_modelInformation": {
     "aimms.widget.type": {
       "literal": "scalar"
     },
@@ -621,7 +677,7 @@
       }
     },
     "name": {
-      "literal": "scl_optimizationResults"
+      "literal": "scl_modelInformation"
     }
   },
   "widgets/sld_maxItems": {
@@ -775,7 +831,7 @@
       "literal": "text"
     },
     "contents": {
-      "literal": "<div><span style=\"background-color: inherit; font-size: 32px;\"><b>Problem Description</b></span></div><div><br></div><div><span style=\"font-size: 18px;\">This example introduces a knapsack problem. The example considers a data set of 16 items which can be included in the knapsack. </span></div><div><span style=\"font-size: 18px;\">The objective is to maximize the cumulated value of the items. The number of items is restricted by the maximum weight that can be carried in the knapsack.</span></div><div><br></div><div><span style=\"font-size: 18px;\">In the classical knapsack problem, each item can be chosen only once. This example also considers variants of the problem in which the number of equal items is unlimited or limited to certain integers.</span></div><div><br></div><div><span style=\"font-size: 18px;\">The following WebUI features are used:</span></div><div><br></div><ul><li><span style=\"font-size: 18px;\">Text Widget</span></li><li><span style=\"font-size: 18px;\">Image Widget</span></li><li><span style=\"font-size: 18px;\">Workflow</span></li><li><span style=\"font-size: 18px;\">Table Widget</span></li><li><span style=\"font-size: 18px;\"> Slider Widget</span></li><li><span style=\"font-size: 18px;\"> Scalar Widget</span></li><li><span style=\"font-size: 18px;\"> Button Widget</span></li><li><span style=\"font-size: 18px;\">Compact Scalar Widget</span></li><li><span style=\"font-size: 18px;\"> Multiselect Widget</span></li></ul><div><br></div><div><br></div><div><i style=\"font-size: 18px;\">Keywords: 0-1 Knapsack, Knapsack, Integer Programming, Binary Integer Programming, Cover Inequalities, Network Object.</i></div>"
+      "literal": "<div><span style=\"font-size: 32px;\"><b>Story</b></span></div><div><br></div><div><span style=\"font-size: 18px;\">This example introduces a knapsack problem. The example considers a data set of 16 items which can be included in the knapsack. </span></div><div><span style=\"font-size: 18px;\">The objective is to maximize the cumulated value of the items. The number of items is restricted by the maximum weight that can be carried in the knapsack.</span></div><div><br></div><div><span style=\"font-size: 18px;\">In the classical knapsack problem, each item can be chosen only once. This example also considers variants of the problem in which the number of equal items is unlimited or limited to certain integers.</span></div><div><br></div><div><br></div>"
     },
     "name": {
       "literal": "txt_problemDescription"
@@ -786,7 +842,7 @@
       "literal": "text"
     },
     "contents": {
-      "literal": "<div style=\"text-align: center;\">&nbsp;</div><div><b style=\"background-color: inherit; font-size: 32px;\">Welcome!</b></div><div><br></div><div><span style=\"background-color: inherit; font-size: 18px;\">You are in a AIMMS Example. Feel free to play around and create something more from this app.</span></div><div><span style=\"background-color: inherit; font-size: 18px;\">And, if you do, please, fork this repository and commit your changes.&nbsp;</span><b><span style=\"background-color: inherit; font-size: 18px;\">Making our github always up to date to the entire community!</span></b></div><div><br></div><div><span style=\"background-color: inherit; font-size: 18px;\">And, do not forget to sign up to our&nbsp;</span><b><a href=\"https://community.aimms.com/\" style=\"background-color: inherit; font-size: 18px;\" target=\"_blank\">Community</a></b><span style=\"background-color: inherit; font-size: 18px;\">&nbsp;and&nbsp;</span><b><a href=\"https://academy.aimms.com/\" style=\"background-color: inherit;\" target=\"_blank\"><span style=\"font-size: 18px;\">Academy</span></a></b><span style=\"background-color: inherit; font-size: 18px;\">.</span></div><div><br></div><div><span style=\"background-color: inherit; font-size: 18px;\">In the&nbsp;</span><span style=\"background-color: rgb(255, 255, 204); font-size: 18px;\">community</span><span style=\"background-color: inherit; font-size: 18px;\">, you will be able to talk to other developers and AIMMSians, all of us ready to help.</span></div><div><br></div><div><span style=\"background-color: inherit; font-size: 18px;\">At the&nbsp;</span><span style=\"background-color: rgb(255, 255, 204); font-size: 18px;\">academy</span><span style=\"background-color: inherit; font-size: 18px;\">, you will be able to practice and try some new challenges. We are always creating new courses, so keep an eye out for upcoming courses.</span></div><div><br></div><div><span style=\"background-color: inherit; font-size: 18px;\">However, if you have any question or curiosity that cannot be posted on the community, please contact us at&nbsp;</span><i style=\"background-color: rgb(255, 255, 204); font-size: 18px;\">support@aimms.com</i><i style=\"background-color: inherit; font-size: 18px;\">.</i></div>"
+      "literal": "<div style=\"text-align: center;\">&nbsp;</div><div><b style=\"background-color: inherit; font-size: 32px;\">Welcome!</b></div><div><br></div><div><span style=\"background-color: inherit; font-size: 18px;\">You are in an AIMMS Example. Feel free to play around and create something more in this app!</span></div><div><span style=\"background-color: inherit; font-size: 18px;\">&nbsp;</span></div><div><span style=\"background-color: inherit; font-size: 18px;\">If you do, please fork this repository and commit your changes.&nbsp;</span><b style=\"background-color: inherit; font-size: 18px;\">This ensures our GitHub stays up-to-date for the entire community!</b></div><div><br></div><div><span style=\"background-color: inherit; font-size: 18px;\">You can also check our other interactive resources:</span></div><div><br></div><ul><li><span style=\"background-color: inherit; font-size: 18px;\">In the Online&nbsp;</span><a href=\"https://community.aimms.com/\" target=\"_blank\"><span style=\"background-color: inherit; font-size: 18px;\">Community</span></a><span style=\"background-color: inherit; font-size: 18px;\">, talk to other developers and AIMMSians about the product, modeling, use cases, and more.</span></li><li><span style=\"background-color: inherit; font-size: 18px;\">In the&nbsp;</span><a href=\"https://academy.aimms.com/\" target=\"_blank\"><span style=\"color: rgb(0, 0, 129); background-color: inherit; font-size: 18px;\">Academy</span></a><span style=\"background-color: inherit; font-size: 18px;\">, learn new skills and challenge yourself. We are busy creating new courses, so keep an eye out!</span></li></ul><div><br></div><div><span style=\"background-color: inherit; font-size: 18px;\">For questions that can't be posted on the community, contact us at&nbsp;</span><i style=\"background-color: rgb(255, 255, 204); font-size: 18px;\">support@aimms.com</i><span style=\"background-color: inherit; font-size: 18px;\">.</span></div><div><br></div><div><br></div><div><br></div><div><br></div><div><br></div><div><br></div><div><br></div>"
     },
     "name": {
       "literal": "txt_welcome"

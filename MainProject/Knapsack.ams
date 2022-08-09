@@ -1,6 +1,6 @@
 ## ams_version=1.0
 
-Model Main_CarSelection {
+Model Main_Knapsack {
 	Section Data_Model {
 		Section Quantities_and_Units {
 			Comment: {
@@ -36,7 +36,45 @@ Model Main_CarSelection {
 			}
 		}
 		Section Inputs {
-			Procedure pr_dataGenerator {
+			Section Items {
+				Set s_items {
+					Index: i_item;
+					Parameter: ep_selectedItem;
+					Comment: "ElementRange(1, p_maxItems, prefix:\"item-\", fill:1)";
+				}
+				Parameter p_maxItems {
+					Text: "No. of items";
+					Range: integer;
+					InitialData: 14;
+				}
+				Parameter p_itemValue {
+					IndexDomain: (i_item);
+					Unit: $;
+				}
+				Parameter p_itemWeight {
+					IndexDomain: (i_item);
+					Unit: lb;
+				}
+				Parameter p_maxWeightKnapsack {
+					Text: "Max. weight knapsack";
+					Unit: lb;
+					InitialData: 60;
+				}
+				Parameter p_itemRangeMin {
+					IndexDomain: (i_item);
+					Range: integer;
+				}
+				Parameter p_itemRangeMax {
+					IndexDomain: (i_item);
+					Range: integer;
+				}
+				Parameter p_itemBound {
+					IndexDomain: (i_item);
+					Text: "No. of copies that is allowed";
+					Range: integer;
+				}
+			}
+			Procedure pr_randomizeData {
 				Body: {
 					empty p_itemValue, p_itemWeight, p_itemBound;
 					
@@ -44,42 +82,6 @@ Model Main_CarSelection {
 					p_itemWeight(i_item) := uniform(0[lb],p_maxWeightKnapsack/3);
 					p_itemBound(i_item) := ceil(uniform(0,10));
 				}
-			}
-			Set s_items {
-				Index: i_item;
-				Parameter: ep_item;
-				Definition: ElementRange(1, p_maxItems, prefix:"item-", fill:1);
-			}
-			Parameter p_maxItems {
-				Text: "No. of items";
-				Range: integer;
-				InitialData: 14;
-			}
-			Parameter p_itemValue {
-				IndexDomain: (i_item);
-				Unit: $;
-			}
-			Parameter p_itemWeight {
-				IndexDomain: (i_item);
-				Unit: lb;
-			}
-			Parameter p_maxWeightKnapsack {
-				Text: "Max. weight knapsack";
-				Unit: lb;
-				InitialData: 60;
-			}
-			Parameter p_itemRangeMin {
-				IndexDomain: (i_item);
-				Range: integer;
-			}
-			Parameter p_itemRangeMax {
-				IndexDomain: (i_item);
-				Range: integer;
-			}
-			Parameter p_itemBound {
-				IndexDomain: (i_item);
-				Text: "No. of copies that is allowed";
-				Range: integer;
 			}
 		}
 		Section Math_Model {
@@ -181,17 +183,8 @@ Model Main_CarSelection {
 		}
 	}
 	Section UI_Declarations {
-		StringParameter sp_def_caseName {
-			Definition: "Scenario: " + CaseFileURL(CurrentCase);
-		}
 		StringParameter sp_logo {
 			Definition: "aimms_logo.png";
-		}
-		StringParameter sp_problemDescription {
-			Definition: FileRead("Description.txt");
-		}
-		Parameter p_itemFilter {
-			IndexDomain: i_item;
 		}
 		Section Workflow {
 			StringParameter sp_myWorkflows {
@@ -200,21 +193,106 @@ Model Main_CarSelection {
 			StringParameter sp_myWorkflowSteps {
 				IndexDomain: (webui::indexWorkflowOrder,webui::indexNoOfPages,webui::indexWorkflowPageSpec);
 				Definition: {
-					data 
-					{ ( 1, 1, displayText       ) : "Welcome"            ,  ( 1, 1, icon              ) : "aimms-happy"        ,
-					  ( 1, 1, pageId            ) : "home"               ,  ( 1, 1, tooltip           ) : "Problem Description",
-					  ( 1, 1, workflowPageState ) : "Active"             ,  ( 1, 1, pageDataState     ) : "Incomplete"         ,
-					  ( 1, 1, redirectPageId    ) : "home"               ,  ( 1, 2, displayText       ) : "Problem Description",
-					  ( 1, 2, icon              ) : "aimms-lamp5"        ,  ( 1, 2, pageId            ) : "problem_description",
-					  ( 1, 2, tooltip           ) : "Problem Description",  ( 1, 2, workflowPageState ) : "Active"             ,
-					  ( 1, 2, pageDataState     ) : "Incomplete"         ,  ( 1, 2, redirectPageId    ) : "home"               ,
-					  ( 1, 3, displayText       ) : "Inputs"             ,  ( 1, 3, icon              ) : "aimms-equalizer2"   ,
-					  ( 1, 3, pageId            ) : "inputs"             ,  ( 1, 3, tooltip           ) : "Inputs"             ,
-					  ( 1, 3, workflowPageState ) : "Active"             ,  ( 1, 3, pageDataState     ) : "Incomplete"         ,
-					  ( 1, 3, redirectPageId    ) : "home"               ,  ( 1, 4, displayText       ) : "Results"            ,
-					  ( 1, 4, icon              ) : "aimms-target"       ,  ( 1, 4, pageId            ) : "results"            ,
-					  ( 1, 4, tooltip           ) : "Results"            ,  ( 1, 4, workflowPageState ) : "Active"             ,
-					  ( 1, 4, pageDataState     ) : "Incomplete"         ,  ( 1, 4, redirectPageId    ) : "home"                }
+					{ ( '1', '1', 'displayText'       ) : "Welcome"            ,  ( '1', '1', 'icon'              ) : "aimms-happy"        ,
+					  ( '1', '1', 'pageId'            ) : "home"               ,  ( '1', '1', 'tooltip'           ) : "welcome"            ,
+					  ( '1', '1', 'workflowPageState' ) : "active"             ,  ( '1', '1', 'pageDataState'     ) : "Incomplete"         ,
+					  ( '1', '1', 'redirectPageId'    ) : "home"               ,  ( '1', '2', 'displayText'       ) : "Story"              ,
+					  ( '1', '2', 'icon'              ) : "aimms-lamp5"        ,  ( '1', '2', 'pageId'            ) : "problem_description",
+					  ( '1', '2', 'tooltip'           ) : "Problem description",  ( '1', '2', 'workflowPageState' ) : "active"             ,
+					  ( '1', '2', 'pageDataState'     ) : "Incomplete"         ,  ( '1', '2', 'redirectPageId'    ) : "home"               ,
+					  ( '1', '3', 'displayText'       ) : "Inputs"             ,  ( '1', '3', 'icon'              ) : "aimms-equalizer2"   ,
+					  ( '1', '3', 'pageId'            ) : "inputs"             ,  ( '1', '3', 'tooltip'           ) : "Input data"         ,
+					  ( '1', '3', 'workflowPageState' ) : "active"             ,  ( '1', '3', 'pageDataState'     ) : "Incomplete"         ,
+					  ( '1', '3', 'redirectPageId'    ) : "home"               ,  ( '1', '4', 'displayText'       ) : "Results"            ,
+					  ( '1', '4', 'icon'              ) : "aimms-make-group"   ,  ( '1', '4', 'pageId'            ) : "results"            ,
+					  ( '1', '4', 'tooltip'           ) : "Model outputs"      ,  ( '1', '4', 'workflowPageState' ) : if (not p_solutionTime) then "inactive" else "active" endif,
+					  ( '1', '4', 'pageDataState'     ) : "Incomplete"         ,  ( '1', '4', 'redirectPageId'    ) : "home"                }
+				}
+			}
+		}
+		Section CRUD {
+			StringParameter sp_addEditElement;
+			Section CRUD_Items {
+				Procedure pr_openAddItem {
+					Body: {
+						empty sp_addEditElement;
+						
+						webui::OpenDialogPage(
+							pageId  :  'crud', 
+							title   :  "Add Items", 
+							actions :  s_loc_actions, 
+							onDone  :  'pr_addItem');
+					}
+					Set s_loc_actions {
+						InitialData: {
+							{'Cancel', 'OK'}
+						}
+					}
+				}
+				Procedure pr_addItem {
+					Arguments: sp_arg_action;
+					Body: {
+						if sp_arg_action = 'OK' then
+						    ep_selectedItem := StringToElement(s_items, sp_addEditElement, 1);
+						endif;
+					}
+					StringParameter sp_arg_action {
+						Property: Input;
+					}
+				}
+				Procedure pr_openEditItem {
+					Body: {
+						sp_addEditElement := ep_selectedItem;
+						
+						webui::OpenDialogPage(
+							pageId  :  'crud', 
+							title   :  "Edit Restaurant", 
+							actions :  s_loc_actions, 
+							onDone  :  'pr_editItem');
+					}
+					Set s_loc_actions {
+						InitialData: {
+							{'Cancel', 'OK'}
+						}
+					}
+				}
+				Procedure pr_editItem {
+					Arguments: sp_arg_action;
+					Body: {
+						if sp_arg_action = 'OK' then
+						    SetElementRename(s_items, ep_selectedItem, sp_addEditElement);
+						endif;
+					}
+					StringParameter sp_arg_action {
+						Property: Input;
+					}
+				}
+				Procedure pr_deleteItem {
+					Body: {
+						s_items -= ep_selectedItem;
+						
+						ep_selectedItem := first(i_item);
+					}
+				}
+			}
+		}
+		Section Pages {
+			Section Inputs_Page;
+			Section Results_Page {
+				DeclarationSection Result_Side_Panel {
+					StringParameter sp_resultsSidePanel {
+						IndexDomain: (webui::indexPageExtension,webui::indexSidePanelSpec);
+						Definition: {
+							data 
+							{ ( 1, displayText ) : "KPIs"             ,  ( 1, pageId      ) : "informations"     ,
+							  ( 1, icon        ) : "aimms-question"   ,  ( 1, state       ) : "active"           ,
+							  ( 2, displayText ) : "Model Information",  ( 2, pageId      ) : "model_information",
+							  ( 2, icon        ) : "aimms-info"       ,  ( 2, state       ) : "active"            }
+						}
+					}
+					Parameter p_itemFilter {
+						IndexDomain: i_item;
+					}
 				}
 			}
 		}
@@ -223,6 +301,10 @@ Model Main_CarSelection {
 				Definition: "readonly";
 			}
 		}
+	}
+	Section Integration {
+		Procedure pr_readAll;
+		Procedure pr_writeAll;
 	}
 	Procedure MainInitialization {
 		Comment: "Add initialization statements here that do NOT require any library being initialized already.";

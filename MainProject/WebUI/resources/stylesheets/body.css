@@ -2,6 +2,9 @@
 .scroll-wrapper--pagev2 .page-container {
   content: " ";
   background: url(img/RightBackground.png) rgb(249, 249, 249) no-repeat left/contain;
-
 }
 
+.widgetdiv .awf-dock.top {
+  border-bottom: 2px solid var(--primaryDark);
+  background: var(--primaryLight);
+}

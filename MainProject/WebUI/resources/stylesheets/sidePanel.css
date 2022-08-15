@@ -1,6 +1,6 @@
 /*Change color after tab click*/
 .sidepanel-container .sidepanel-tab.active {
-  background-color: var(--primary);
+  background-color: var(--primaryDark);
 }
 
 /*Change letter color on hover*/
@@ -11,16 +11,20 @@
 /*Change icon color*/
 .sidepanel-container .sidepanel-tab .sidepanel-icon,
 .sidepanel-container .sidepanel-tab:hover {
-  color: var(--primary);
+  color: var(--primaryDark);
 }
 
 /*Change color after all tabs*/
 .sidepanel-container .sidepanel-tabs-container:after {
-  background: var(--primary);
+  background: var(--primaryDark);
 }
 
-/*Change the color bellow sidepanel tabs*/
+/*Change the color below sidepanel tabs*/
 .sidepanel-container {
-  background-color: rgba(249, 249, 249, 0.438)
+  background-color:   rgb(249, 249, 249);
+
 }
 
+.sidepanel-active .sidepanel-container {
+  background-color:   rgba(249, 249, 249, 0);
+}

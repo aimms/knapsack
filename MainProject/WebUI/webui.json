@@ -148,14 +148,14 @@
       }
     }
   },
-  "layouts/custom_234161e0-a7c2-477f-b278-101c9e62d5e4": {
+  "layouts/custom_ae8aa3ba-f894-467c-9e3e-6fccf57f8fce": {
     "definition": {
       "literal": {
         "componentName": "Grid",
         "props": {
-          "gridTemplateColumns": "0.3fr 0.7fr",
-          "gridTemplateRows": "0.9fr 0.1fr",
-          "gridTemplateAreas": "\"area-a area-c\" \"area-b area-d\""
+          "gridTemplateColumns": "0.8fr 0.2fr",
+          "gridTemplateRows": "20% 78%",
+          "gridTemplateAreas": "\"area-a area-b\" \"area-a area-c\""
         },
         "items": [
           {
@@ -163,7 +163,7 @@
             "props": {
               "gridArea": "area-a",
               "name": "Area A",
-              "gridAutoFlow": "row"
+              "gridAutoFlow": "column"
             }
           },
           {
@@ -180,47 +180,6 @@
               "gridArea": "area-c",
               "name": "Area C",
               "gridAutoFlow": "row"
-            }
-          },
-          {
-            "componentName": "WidgetArea",
-            "props": {
-              "gridArea": "area-d",
-              "name": "Area D",
-              "gridAutoFlow": "column"
-            }
-          }
-        ]
-      }
-    },
-    "displayName": {
-      "literal": "LayoutInputs"
-    }
-  },
-  "layouts/custom_ae8aa3ba-f894-467c-9e3e-6fccf57f8fce": {
-    "definition": {
-      "literal": {
-        "componentName": "Grid",
-        "props": {
-          "gridTemplateColumns": "0.8fr 0.2fr",
-          "gridTemplateRows": "1fr 1fr",
-          "gridTemplateAreas": "\"area-a area-b\" \"area-a area-b\""
-        },
-        "items": [
-          {
-            "componentName": "WidgetArea",
-            "props": {
-              "gridArea": "area-a",
-              "name": "Area A",
-              "gridAutoFlow": "row"
-            }
-          },
-          {
-            "componentName": "WidgetArea",
-            "props": {
-              "gridArea": "area-b",
-              "name": "Area B",
-              "gridAutoFlow": "column"
             }
           }
         ]
@@ -308,54 +267,48 @@
     "bindings": {
       "literal": [
         {
-          "widgetUri": "btn_standardRun",
-          "gridArea": "area-d",
-          "dndId": "area-dbtn_standardRun0"
-        },
-        {
-          "widgetUri": "btn_boundedRun",
-          "gridArea": "area-d",
-          "dndId": "area-dbtn_boundedRun1"
-        },
-        {
-          "widgetUri": "btn_unboundedRun",
-          "gridArea": "area-d",
-          "dndId": "area-dbtn_unboundedRun2"
-        },
-        {
-          "widgetUri": "btn_dataGenerator",
+          "widgetUri": "scl_maxWeightKnapsack",
           "gridArea": "area-c",
-          "dndId": "area-cbtn_dataGenerator3"
-        },
-        {
-          "widgetUri": "tbl_items",
-          "gridArea": "area-c",
-          "dndId": "area-ctbl_items4"
-        },
-        {
-          "widgetUri": "test",
-          "gridArea": "area-a",
-          "dndId": "area-atest5"
-        },
-        {
-          "widgetUri": "asd",
-          "gridArea": "area-a",
-          "dndId": "Unassigned widgetsasd8"
+          "dndId": "area-bscl_maxWeightKnapsack1"
         },
         {
           "widgetUri": "sld_maxItems",
-          "gridArea": "area-a",
-          "dndId": "area-asld_maxItems6"
+          "gridArea": "area-b",
+          "dndId": "area-bsld_maxItems0"
         },
         {
-          "widgetUri": "scl_maxWeightKnapsack",
+          "widgetUri": "tbl_items",
           "gridArea": "area-a",
-          "dndId": "area-ascl_maxWeightKnapsack7"
+          "dndId": "area-atbl_items2"
         }
       ]
     },
     "layoutId": {
-      "literal": "custom_234161e0-a7c2-477f-b278-101c9e62d5e4"
+      "literal": "Layout10"
+    },
+    "secondarypageactions": {
+      "aimms": {
+        "contents": [
+          "sp_inputsSecondaryActions"
+        ],
+        "slices": [
+          {
+            "identifier": "sp_inputsSecondaryActions",
+            "slice": [
+              {
+                "index": "webui::indexPageExtension",
+                "type": "free",
+                "value": "webui::indexPageExtension"
+              },
+              {
+                "index": "webui::indexPageActionSpec",
+                "type": "free",
+                "value": "webui::indexPageActionSpec"
+              }
+            ]
+          }
+        ]
+      }
     },
     "widgets": {
       "literal": [
@@ -375,48 +328,6 @@
         },
         {
           "uri": "sld_maxItems",
-          "layoutInfo": {
-            "width": "2",
-            "height": "1"
-          }
-        },
-        {
-          "uri": "btn_standardRun",
-          "layoutInfo": {
-            "width": "2",
-            "height": "1"
-          }
-        },
-        {
-          "uri": "btn_boundedRun",
-          "layoutInfo": {
-            "width": "2",
-            "height": "1"
-          }
-        },
-        {
-          "uri": "btn_unboundedRun",
-          "layoutInfo": {
-            "width": "2",
-            "height": "1"
-          }
-        },
-        {
-          "uri": "btn_dataGenerator",
-          "layoutInfo": {
-            "width": "2",
-            "height": "1"
-          }
-        },
-        {
-          "uri": "test",
-          "layoutInfo": {
-            "width": "2",
-            "height": "1"
-          }
-        },
-        {
-          "uri": "asd",
           "layoutInfo": {
             "width": "2",
             "height": "1"
@@ -485,14 +396,29 @@
     "bindings": {
       "literal": [
         {
-          "widgetUri": "tbl_knapsackItems",
-          "gridArea": "area-a",
-          "dndId": "area-btbl_knapsackItems0"
+          "widgetUri": "mslc_multiselectFilter",
+          "gridArea": "area-c",
+          "dndId": "area-cmslc_multiselectFilter0"
         },
         {
-          "widgetUri": "mslc_multiselectFilter",
+          "widgetUri": "cmb_results",
+          "gridArea": "area-a",
+          "dndId": "area-acmb_results2"
+        },
+        {
+          "widgetUri": "cmb_weightResults",
+          "gridArea": "area-a",
+          "dndId": "area-acmb_weightResults3"
+        },
+        {
+          "widgetUri": "tbl_knapsackItems",
+          "gridArea": "area-a",
+          "dndId": "area-atbl_knapsackItems1"
+        },
+        {
+          "widgetUri": "scl_totals",
           "gridArea": "area-b",
-          "dndId": "area-bmslc_multiselectFilter1"
+          "dndId": "area-bscl_totals4"
         }
       ]
     },
@@ -538,103 +464,150 @@
             "width": "2",
             "height": "1"
           }
+        },
+        {
+          "uri": "cmb_results",
+          "layoutInfo": {
+            "width": "2",
+            "height": "1"
+          }
+        },
+        {
+          "uri": "cmb_weightResults",
+          "layoutInfo": {
+            "width": "2",
+            "height": "1"
+          }
+        },
+        {
+          "uri": "scl_totals",
+          "layoutInfo": {
+            "width": "2",
+            "height": "1"
+          }
         }
       ]
     }
   },
-  "widgets/asd": {
+  "widgets/cmb_results": {
     "aimms.widget.type": {
-      "literal": "selectionbox-v2"
+      "literal": "combinationchart"
     },
-    "contents": {
+    "axis.y.0.max": {
       "aimms": {
         "contents": [
-          "p_itemFilter"
+          "p_maxItems"
         ],
-        "slices": [
+        "slices": []
+      }
+    },
+    "contents.__display_order__": {
+      "literal": [
+        "contents.0"
+      ]
+    },
+    "contents.0.displaydomain": {
+      "literal": ""
+    },
+    "contents.0.identifier": {
+      "literal": {
+        "identifier": "v_knapsackItems",
+        "slice": [
           {
-            "identifier": "p_itemFilter",
-            "slice": [
-              {
-                "index": "i_item",
-                "type": "free",
-                "value": "i_item"
-              }
-            ]
+            "index": "i_item",
+            "type": "free",
+            "value": "i_item"
           }
         ]
       }
     },
-    "name": {
-      "literal": "asd"
-    }
-  },
-  "widgets/btn_boundedRun": {
-    "action": {
+    "contents.partition": {
       "literal": {
-        "type": "procedure",
-        "value": "pr_solveKnapsackModelBounded"
+        "header": [],
+        "grouped": [],
+        "stacked": [
+          "i_item"
+        ],
+        "aggregated": [
+          "<IDENTIFIER-SET>"
+        ]
       }
     },
-    "aimms.widget.type": {
-      "literal": "button"
+    "contents.show.units": {
+      "literal": false
+    },
+    "indices.__display_order__": {
+      "literal": [
+        "indices.0"
+      ]
+    },
+    "indices.0.index": {
+      "literal": "i_item"
+    },
+    "legend.show": {
+      "literal": true
     },
     "name": {
-      "literal": "btn_boundedRun"
+      "literal": "cmb_quantityResults"
     },
     "title": {
-      "literal": "Solve Model Bounded"
+      "literal": "per Quantity"
     }
   },
-  "widgets/btn_dataGenerator": {
-    "action": {
-      "literal": {
-        "type": "procedure",
-        "value": "pr_randomizeData"
+  "widgets/cmb_weightResults": {
+    "aimms.widget.type": {
+      "literal": "combinationchart"
+    },
+    "axis.y.0.max": {
+      "aimms": {
+        "contents": [
+          "p_maxWeightKnapsack"
+        ],
+        "slices": []
       }
     },
-    "aimms.widget.type": {
-      "literal": "button"
+    "contents.__display_order__": {
+      "literal": [
+        "contents.0"
+      ]
     },
-    "name": {
-      "literal": "btn_dataGenerator"
-    },
-    "title": {
-      "literal": "Generate Random Data"
-    }
-  },
-  "widgets/btn_standardRun": {
-    "action": {
+    "contents.0.identifier": {
       "literal": {
-        "type": "procedure",
-        "value": "pr_solveKnapsackModel"
+        "identifier": "v_inline_knapsackWeight",
+        "slice": [
+          {
+            "index": "i_item",
+            "type": "free",
+            "value": "i_item"
+          }
+        ]
       }
     },
-    "aimms.widget.type": {
-      "literal": "button"
-    },
-    "name": {
-      "literal": "btn_standardRun"
-    },
-    "title": {
-      "literal": "Solve Model Classic (0/1)"
-    }
-  },
-  "widgets/btn_unboundedRun": {
-    "action": {
+    "contents.partition": {
       "literal": {
-        "type": "procedure",
-        "value": "pr_solveKnapsackModelUnBounded"
+        "header": [],
+        "grouped": [],
+        "stacked": [
+          "i_item"
+        ],
+        "aggregated": [
+          "<IDENTIFIER-SET>"
+        ]
       }
     },
-    "aimms.widget.type": {
-      "literal": "button"
+    "indices.__display_order__": {
+      "literal": [
+        "indices.0"
+      ]
+    },
+    "legend.show": {
+      "literal": true
     },
     "name": {
-      "literal": "btn_unboundedRun"
+      "literal": "cmb_weightResults"
     },
     "title": {
-      "literal": "Solve Model Unbounded"
+      "literal": "per Weight"
     }
   },
   "widgets/img_homeLogo": {
@@ -726,6 +699,26 @@
       "literal": "scl_modelInformation"
     }
   },
+  "widgets/scl_totals": {
+    "aimms.widget.type": {
+      "literal": "scalar"
+    },
+    "contents": {
+      "aimms": {
+        "contents": [
+          "v_knapsackValue",
+          "v_knapsackItems",
+          "v_inline_knapsackWeight"
+        ]
+      }
+    },
+    "name": {
+      "literal": "scl_totals"
+    },
+    "title": {
+      "literal": "Totals"
+    }
+  },
   "widgets/sld_maxItems": {
     "aimms.widget.type": {
       "literal": "slider"
@@ -760,8 +753,11 @@
     "contents": {
       "aimms": {
         "contents": [
+          "sp_itemDescription",
           "p_itemValue",
           "p_itemWeight",
+          "p_itemRangeMin",
+          "p_itemRangeMax",
           "p_itemBound"
         ]
       }
@@ -770,7 +766,10 @@
       "literal": {
         "p_itembound": "1",
         "p_itemvalue": "1",
-        "p_itemweight": "1"
+        "p_itemweight": "1",
+        "p_itemrangemax": "1",
+        "p_itemrangemin": "1",
+        "sp_itemdescription": "1"
       }
     },
     "contents.partition": {
@@ -784,6 +783,35 @@
         "aggregated": []
       }
     },
+    "contextmenu": {
+      "aimms": {
+        "contents": [
+          "sp_itemItemActions"
+        ],
+        "slices": [
+          {
+            "identifier": "sp_itemItemActions",
+            "slice": [
+              {
+                "index": "webui::indexWidgetItemActionSpec",
+                "type": "free",
+                "value": "webui::indexWidgetItemActionSpec"
+              },
+              {
+                "index": "webui::indexPageExtension",
+                "type": "free",
+                "value": "webui::indexPageExtension"
+              },
+              {
+                "index": "webui::indexWidgetActionSpec",
+                "type": "free",
+                "value": "webui::indexWidgetActionSpec"
+              }
+            ]
+          }
+        ]
+      }
+    },
     "custom.column.widths": {
       "literal": [
         {
@@ -794,28 +822,54 @@
         {
           "type": "colHeader",
           "colKey": {
-            "<IDENTIFIER-SET>": "p_itemValue"
+            "<IDENTIFIER-SET>": "p_itemBound"
           },
-          "width": 14.58
+          "width": 10.75
+        },
+        {
+          "type": "colHeader",
+          "colKey": {
+            "<IDENTIFIER-SET>": "p_itemRangeMax"
+          },
+          "width": 14.39
+        },
+        {
+          "type": "colHeader",
+          "colKey": {
+            "<IDENTIFIER-SET>": "p_itemRangeMin"
+          },
+          "width": 14.38
         },
         {
           "type": "colHeader",
           "colKey": {
             "<IDENTIFIER-SET>": "p_itemWeight"
           },
-          "width": 14.37
+          "width": 12.54
         },
         {
           "type": "colHeader",
           "colKey": {
-            "<IDENTIFIER-SET>": "p_itemBound"
+            "<IDENTIFIER-SET>": "p_itemValue"
           },
-          "width": 12.08
+          "width": 12.95
+        },
+        {
+          "type": "colHeader",
+          "colKey": {
+            "<IDENTIFIER-SET>": "sp_itemDescription"
+          },
+          "width": 17.36
         }
       ]
     },
     "name": {
       "literal": "tbl_items"
+    },
+    "store.focus.in": {
+      "literal": {
+        "i_item": "ep_selectedItem"
+      }
     },
     "title": {
       "literal": "Item Information"
@@ -870,22 +924,6 @@
     },
     "name": {
       "literal": "tbl_knapsackItems"
-    }
-  },
-  "widgets/test": {
-    "aimms.widget.type": {
-      "literal": "selectionbox-v2"
-    },
-    "contents": {
-      "aimms": {
-        "contents": [
-          "ep_test"
-        ],
-        "slices": []
-      }
-    },
-    "name": {
-      "literal": "test"
     }
   },
   "widgets/txt_problemDescription": {

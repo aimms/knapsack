@@ -401,19 +401,24 @@
           "dndId": "area-cmslc_multiselectFilter0"
         },
         {
+          "widgetUri": "dasdas",
+          "gridArea": "area-c",
+          "dndId": "Unassigned widgetsdasdas5"
+        },
+        {
           "widgetUri": "cmb_results",
           "gridArea": "area-a",
-          "dndId": "area-acmb_results2"
+          "dndId": "area-acmb_results1"
         },
         {
           "widgetUri": "cmb_weightResults",
           "gridArea": "area-a",
-          "dndId": "area-acmb_weightResults3"
+          "dndId": "area-acmb_weightResults2"
         },
         {
           "widgetUri": "tbl_knapsackItems",
           "gridArea": "area-a",
-          "dndId": "area-atbl_knapsackItems1"
+          "dndId": "area-atbl_knapsackItems3"
         },
         {
           "widgetUri": "scl_totals",
@@ -608,6 +613,14 @@
     },
     "title": {
       "literal": "per Weight"
+    }
+  },
+  "widgets/dasdas": {
+    "aimms.widget.type": {
+      "literal": "selectionbox-v2"
+    },
+    "name": {
+      "literal": "dasdas"
     }
   },
   "widgets/img_homeLogo": {

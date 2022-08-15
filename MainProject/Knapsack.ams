@@ -42,6 +42,10 @@ Model Main_Knapsack {
 					Parameter: ep_selectedItem;
 					Comment: "ElementRange(1, p_maxItems, prefix:\"item-\", fill:1)";
 				}
+				ElementParameter ep_test {
+					Range: s_items;
+					Default: 'item-02';
+				}
 				Parameter p_maxItems {
 					Text: "No. of items";
 					Range: integer;
@@ -50,6 +54,7 @@ Model Main_Knapsack {
 				Parameter p_itemValue {
 					IndexDomain: (i_item);
 					Unit: $;
+					Default: 0;
 				}
 				Parameter p_itemWeight {
 					IndexDomain: (i_item);
@@ -303,8 +308,179 @@ Model Main_Knapsack {
 		}
 	}
 	Section Integration {
-		Procedure pr_readAll;
-		Procedure pr_writeAll;
+		StringParameter sp_wbName {
+			Definition: "Knapsack Data.xlsx";
+		}
+		Procedure pr_readAll {
+			Body: {
+				if axll::WorkBookIsOpen(sp_wbName) then
+				    axll::CloseWorkBook(sp_wbName);
+				endif;    
+				
+				axll::OpenWorkBook(sp_wbName);
+				
+				block ! ReadTable Import
+				axll::SelectSheet("Item");
+				p_loc_lastRow := axll::LastUsedRowNumber;
+				
+				axll::ReadTable(
+					IdentifierReference    :  p_itemValue(i_item), 
+					RowHeaderRange         :  "A2:A" + p_loc_lastRow, 
+					ColumnHeaderRange      :  "", 
+					DataRange              :  "B2:B" + p_loc_lastRow, 
+					ModeForUnknownElements :  1, 
+					MergeWithExistingData  :  0);
+				
+				axll::ReadTable(
+					IdentifierReference    :  p_itemWeight(i_item), 
+					RowHeaderRange         :  "A2:A" + p_loc_lastRow, 
+					ColumnHeaderRange      :  "", 
+					DataRange              :  "C2:C" + p_loc_lastRow, 
+					ModeForUnknownElements :  1, 
+					MergeWithExistingData  :  0);
+				
+				axll::ReadTable(
+					IdentifierReference    :  p_itemRangeMin(i_item), 
+					RowHeaderRange         :  "A2:A" + p_loc_lastRow, 
+					ColumnHeaderRange      :  "", 
+					DataRange              :  "D2:D" + p_loc_lastRow, 
+					ModeForUnknownElements :  1, 
+					MergeWithExistingData  :  0);
+				
+				axll::ReadTable(
+					IdentifierReference    :  p_itemRangeMax(i_item), 
+					RowHeaderRange         :  "A2:A" + p_loc_lastRow, 
+					ColumnHeaderRange      :  "", 
+					DataRange              :  "E2:E" + p_loc_lastRow, 
+					ModeForUnknownElements :  1, 
+					MergeWithExistingData  :  0);				
+				
+				axll::ReadTable(
+					IdentifierReference    :  p_itemBound(i_item), 
+					RowHeaderRange         :  "A2:A" + p_loc_lastRow, 
+					ColumnHeaderRange      :  "", 
+					DataRange              :  "F2:F" + p_loc_lastRow, 
+					ModeForUnknownElements :  1, 
+					MergeWithExistingData  :  0);	
+				endblock;
+				
+				block !	ReadSingleValue Import
+				axll::SelectSheet("Knapsack");
+				
+				axll::ReadSingleValue(p_maxItems, "B1");
+				axll::ReadSingleValue(p_maxWeightKnapsack, "B2");
+				
+				endblock;
+				
+				axll::CloseAllWorkBooks;
+			}
+			Parameter p_loc_lastRow;
+		}
+		Procedure pr_writeAll {
+			Body: {
+				if axll::WorkBookIsOpen(sp_wbName) then
+				    axll::CloseWorkBook(sp_wbName);
+				endif;    
+				
+				sp_loc_itemTitle := "Items";
+				sp_loc_itemValueTitle := "Value";
+				sp_loc_itemWeightTitle := "Weight";
+				sp_loc_itemRangeMinTitle := "Range Min.";
+				sp_loc_itemRangeMaxTitle := "Range Max.";
+				sp_loc_itemBoundTitle := "Bound";
+				sp_loc_maxItemsTitle := "Max. Items";
+				sp_loc_maxWeightKnapsackTitle := "Max. Weight";
+				
+				s_loc_identifiers 
+				:=  {'p_itemValue', 
+				    'p_itemWeight', 
+				    'p_itemRangeMin', 
+				    'p_itemRangeMax', 
+				    'p_itemBound'};
+				
+				block ! WriteCompositeTable Export
+				axll::CreateNewWorkBook(sp_wbName, "Item");
+				
+				axll::WriteCompositeTable(
+					IdentifierReference :  s_loc_identifiers, 
+					TopLeftCell         :  "A1", 
+					WriteZeros          :  1, 
+					WriteIndexNames     :  0);
+				
+				axll::WriteSingleValue(sp_loc_itemTitle, "A1");
+				axll::WriteSingleValue(sp_loc_itemValueTitle, "B1");
+				axll::WriteSingleValue(sp_loc_itemWeightTitle, "C1");
+				axll::WriteSingleValue(sp_loc_itemRangeMinTitle, "D1");
+				axll::WriteSingleValue(sp_loc_itemRangeMaxTitle, "E1");
+				axll::WriteSingleValue(sp_loc_itemBoundTitle, "F1");
+				endblock;
+				
+				block ! WriteSingleValue Export
+				axll::CreateSheet("Knapsack", "Item");
+				
+				axll::WriteSingleValue(sp_loc_maxItemsTitle, "A1");
+				axll::WriteSingleValue(p_maxItems, "B1");
+				
+				axll::WriteSingleValue(sp_loc_maxWeightKnapsackTitle, "A2");
+				axll::WriteSingleValue(p_maxWeightKnapsack, "B2");
+				endblock;
+				
+				axll::CloseAllWorkBooks;
+			}
+			Set s_loc_identifiers;
+			StringParameter sp_loc_itemTitle;
+			StringParameter sp_loc_itemValueTitle;
+			StringParameter sp_loc_itemWeightTitle;
+			StringParameter sp_loc_itemRangeMinTitle;
+			StringParameter sp_loc_itemRangeMaxTitle;
+			StringParameter sp_loc_itemBoundTitle;
+			StringParameter sp_loc_maxItemsTitle;
+			StringParameter sp_loc_maxWeightKnapsackTitle;
+		}
+		Procedure pr_dev_axllWriteExamples {
+			Body: {
+				if axll::WorkBookIsOpen(sp_wbName) then
+				    axll::CloseWorkBook(sp_wbName);
+				endif;    
+				
+				sp_loc_itemTitle := "Items";
+				sp_loc_itemValueTitle := "Value";
+				
+				block ! WriteTable Export 
+				axll::CreateNewWorkBook(sp_wbName, "WriteTable");
+				axll::SelectSheet("WriteTable");
+				
+				axll::WriteTable(
+					IdentifierReference     :  p_itemValue(i_item), 
+					RowHeaderRange          :  "A2:A15", 
+					ColumnHeaderRange       :  "",
+					DataRange               :  "B2:B15");
+				
+				axll::WriteSingleValue(sp_loc_itemTitle, "A1");
+				axll::WriteSingleValue(sp_loc_itemValueTitle, "B1");
+				endblock;
+				
+				block ! WriteTableQuick Export
+				axll::CreateSheet("WriteTableQuick", "WriteTable");
+				
+				axll::WriteTableQuick(
+					IdentifierReference     :  p_itemValue(i_item), 
+					TopLeftCell             :  "A2", 
+					RowDimension            :  5, 
+					WriteZeros              :  0, 
+					IncludeEmptyRows        :  1, 
+					IncludeEmptyColumns     :  1, 
+					IncludeEmptyRowsColumns :  1);
+				
+				axll::WriteSingleValue(sp_loc_itemTitle, "A1");
+				axll::WriteSingleValue(sp_loc_itemValueTitle, "B1");
+				endblock;
+				
+				axll::CloseAllWorkBooks;
+			}
+			StringParameter sp_loc_itemTitle;
+			StringParameter sp_loc_itemValueTitle;
+		}
 	}
 	Procedure MainInitialization {
 		Comment: "Add initialization statements here that do NOT require any library being initialized already.";

@@ -320,32 +320,37 @@
         {
           "widgetUri": "btn_unboundedRun",
           "gridArea": "area-d",
-          "dndId": "Unassigned widgetsbtn_unboundedRun7"
+          "dndId": "area-dbtn_unboundedRun2"
         },
         {
           "widgetUri": "btn_dataGenerator",
           "gridArea": "area-c",
-          "dndId": "area-cbtn_dataGenerator2"
+          "dndId": "area-cbtn_dataGenerator3"
         },
         {
           "widgetUri": "tbl_items",
           "gridArea": "area-c",
-          "dndId": "area-ctbl_items3"
+          "dndId": "area-ctbl_items4"
         },
         {
-          "widgetUri": "scl_caseName",
-          "gridArea": "area-b",
-          "dndId": "area-bscl_caseName4"
+          "widgetUri": "test",
+          "gridArea": "area-a",
+          "dndId": "area-atest5"
+        },
+        {
+          "widgetUri": "asd",
+          "gridArea": "area-a",
+          "dndId": "Unassigned widgetsasd8"
         },
         {
           "widgetUri": "sld_maxItems",
           "gridArea": "area-a",
-          "dndId": "area-asld_maxItems5"
+          "dndId": "area-asld_maxItems6"
         },
         {
           "widgetUri": "scl_maxWeightKnapsack",
           "gridArea": "area-a",
-          "dndId": "area-ascl_maxWeightKnapsack6"
+          "dndId": "area-ascl_maxWeightKnapsack7"
         }
       ]
     },
@@ -398,6 +403,20 @@
         },
         {
           "uri": "btn_dataGenerator",
+          "layoutInfo": {
+            "width": "2",
+            "height": "1"
+          }
+        },
+        {
+          "uri": "test",
+          "layoutInfo": {
+            "width": "2",
+            "height": "1"
+          }
+        },
+        {
+          "uri": "asd",
           "layoutInfo": {
             "width": "2",
             "height": "1"
@@ -521,6 +540,33 @@
           }
         }
       ]
+    }
+  },
+  "widgets/asd": {
+    "aimms.widget.type": {
+      "literal": "selectionbox-v2"
+    },
+    "contents": {
+      "aimms": {
+        "contents": [
+          "p_itemFilter"
+        ],
+        "slices": [
+          {
+            "identifier": "p_itemFilter",
+            "slice": [
+              {
+                "index": "i_item",
+                "type": "free",
+                "value": "i_item"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    "name": {
+      "literal": "asd"
     }
   },
   "widgets/btn_boundedRun": {
@@ -824,6 +870,22 @@
     },
     "name": {
       "literal": "tbl_knapsackItems"
+    }
+  },
+  "widgets/test": {
+    "aimms.widget.type": {
+      "literal": "selectionbox-v2"
+    },
+    "contents": {
+      "aimms": {
+        "contents": [
+          "ep_test"
+        ],
+        "slices": []
+      }
+    },
+    "name": {
+      "literal": "test"
     }
   },
   "widgets/txt_problemDescription": {

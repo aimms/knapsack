@@ -719,7 +719,7 @@
     "contents": {
       "aimms": {
         "contents": [
-          "v_knapsackValue",
+          "v_inline_knapsackValue",
           "v_knapsackItems",
           "v_inline_knapsackWeight"
         ]
@@ -896,14 +896,14 @@
       "aimms": {
         "contents": [
           "v_knapsackItems",
-          "v_knapsackValue"
+          "v_inline_knapsackValue"
         ]
       }
     },
     "contents.displaydomain": {
       "literal": {
         "v_knapsackitems": "p_itemFilter(i_item)",
-        "v_knapsackvalue": "p_itemFilter(i_item)"
+        "v_inline_knapsackvalue": "p_itemFilter(i_item)"
       }
     },
     "contents.partition": {

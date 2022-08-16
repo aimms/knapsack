@@ -42,10 +42,6 @@ Model Main_Knapsack {
 					Parameter: ep_selectedItem;
 					Comment: "ElementRange(1, p_maxItems, prefix:\"item-\", fill:1)";
 				}
-				ElementParameter ep_test {
-					Range: s_items;
-					Default: 'item-02';
-				}
 				StringParameter sp_itemDescription {
 					IndexDomain: i_item;
 				}
@@ -56,6 +52,7 @@ Model Main_Knapsack {
 				}
 				Parameter p_itemValue {
 					IndexDomain: (i_item);
+					Text: "Price of the item";
 					Unit: $;
 					Default: 0;
 				}
@@ -100,17 +97,18 @@ Model Main_Knapsack {
 					{p_itemRangeMin(i_item)..p_itemRangeMax(i_item)}
 				}
 			}
-			Variable v_knapsackValue {
+			Variable v_knapsackTotalValue {
+				Unit: $;
+				Definition: sum(i_item, v_inline_knapsackValue(i_item));
+			}
+			Variable v_inline_knapsackValue {
 				IndexDomain: i_item;
+				Text: "Total cost";
 				Unit: $;
 				Definition: {
 					v_knapsackItems(i_item) 
 					* p_itemValue(i_item)
 				}
-			}
-			Variable v_knapsackTotalValue {
-				Unit: $;
-				Definition: sum(i_item, v_knapsackItems(i_item) * p_itemValue(i_item));
 			}
 			Variable v_inline_knapsackWeight {
 				IndexDomain: i_item;

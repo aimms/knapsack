@@ -367,6 +367,7 @@ Model Main_Knapsack {
 					}
 					Parameter p_itemFilter {
 						IndexDomain: i_item;
+						InitialData: 1;
 					}
 				}
 			}

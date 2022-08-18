@@ -721,7 +721,8 @@
         "contents": [
           "v_inline_knapsackValue",
           "v_knapsackItems",
-          "v_inline_knapsackWeight"
+          "v_inline_knapsackWeight",
+          "test"
         ]
       }
     },
@@ -932,6 +933,13 @@
             "<IDENTIFIER-SET>": "v_knapsackItems"
           },
           "width": 18.54
+        },
+        {
+          "type": "colHeader",
+          "colKey": {
+            "<IDENTIFIER-SET>": "v_inline_knapsackValue"
+          },
+          "width": 23.75
         }
       ]
     },

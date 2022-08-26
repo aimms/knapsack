@@ -721,8 +721,7 @@
         "contents": [
           "v_inline_knapsackValue",
           "v_knapsackItems",
-          "v_inline_knapsackWeight",
-          "test"
+          "v_inline_knapsackWeight"
         ]
       }
     },

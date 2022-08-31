@@ -142,6 +142,7 @@ Model Main_Knapsack {
 				}
 				Parameter p_solutionTime {
 					Unit: s;
+					InitialData: 0;
 					webui::FlagsIdentifier: sp_readOnlyFlag;
 				}
 			}

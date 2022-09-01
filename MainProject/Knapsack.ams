@@ -96,6 +96,7 @@ Model Main_Knapsack {
 				Range: {
 					{p_itemRangeMin(i_item)..p_itemRangeMax(i_item)}
 				}
+				webui::TooltipIdentifier: sp_tooltipPerQuantity(i_item);
 			}
 			Variable v_knapsackTotalValue {
 				Unit: $;
@@ -115,6 +116,7 @@ Model Main_Knapsack {
 				Range: nonnegative;
 				Unit: lb;
 				Definition: v_knapsackItems(i_item) * p_itemWeight(i_item);
+				webui::TooltipIdentifier: sp_tooltipPerWeight(i_item);
 			}
 			Constraint c_limitKnapsackWeight {
 				Unit: lb;
@@ -191,6 +193,8 @@ Model Main_Knapsack {
 					p_solutionTime := mp_knapsackModel.SolutionTime;
 					p_numberOfConstraints := mp_knapsackModel.NumberOfConstraints;
 					p_numberOfVariables := mp_knapsackModel.NumberOfVariables;
+					
+					p_itemFilter(i_item) := 1;
 				}
 			}
 		}
@@ -366,7 +370,26 @@ Model Main_Knapsack {
 					}
 					Parameter p_itemFilter {
 						IndexDomain: i_item;
-						InitialData: 1;
+					}
+					StringParameter sp_tooltipPerWeight {
+						IndexDomain: i_item | v_inline_knapsackWeight(i_item);
+						Definition: {
+							formatString("%s: %i x %f lb = %f lb.",
+								sp_itemDescription(i_item), 
+								v_knapsackItems(i_item),
+								round(p_itemWeight(i_item), 2),
+								round(v_inline_knapsackWeight(i_item), 2))
+						}
+					}
+					StringParameter sp_tooltipPerQuantity {
+						IndexDomain: i_item | v_inline_knapsackWeight(i_item);
+						Definition: {
+							formatString("%s: %i x $%f = $%f.",
+								sp_itemDescription(i_item), 
+								v_knapsackItems(i_item),
+								round(p_itemValue(i_item), 2),
+								round(v_inline_knapsackValue(i_item), 2))
+						}
 					}
 				}
 			}

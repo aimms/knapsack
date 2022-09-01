@@ -539,6 +539,12 @@
       }
     },
     "contents.show.units": {
+      "literal": true
+    },
+    "data.interpolate": {
+      "literal": false
+    },
+    "data.labels.show": {
       "literal": false
     },
     "indices.__display_order__": {
@@ -599,6 +605,15 @@
           "<IDENTIFIER-SET>"
         ]
       }
+    },
+    "contents.show.units": {
+      "literal": true
+    },
+    "data.interpolate": {
+      "literal": false
+    },
+    "data.labels.show": {
+      "literal": false
     },
     "indices.__display_order__": {
       "literal": [

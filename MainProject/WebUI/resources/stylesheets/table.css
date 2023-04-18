@@ -5,9 +5,3 @@
 .tag-table .cell.flag-number input{
   text-align: center;
 }
-
-/*Change checkbox color*/
-input.boolean-cell-editor-contents {
-  accent-color: var(--primaryDark);
-}
-

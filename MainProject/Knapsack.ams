@@ -40,12 +40,13 @@ Model Main_Knapsack {
 				Set s_items {
 					Index: i_item;
 					Parameter: ep_selectedItem;
-					Comment: "ElementRange(1, p_maxItems, prefix:\"item-\", fill:1)";
+					Definition: ElementRange(1, p_itemQuantity, prefix:"item-", fill:1);
 				}
 				StringParameter sp_itemDescription {
 					IndexDomain: i_item;
+					InitialData: "";
 				}
-				Parameter p_maxItems {
+				Parameter p_itemQuantity {
 					Text: "No. of items";
 					Range: integer;
 					InitialData: 14;
@@ -59,33 +60,47 @@ Model Main_Knapsack {
 				Parameter p_itemWeight {
 					IndexDomain: (i_item);
 					Unit: lb;
+					InitialData: 0;
 				}
 				Parameter p_maxWeightKnapsack {
 					Text: "Max. weight knapsack";
 					Unit: lb;
 					InitialData: 60;
 				}
+				Parameter p_maxItemKnapsack {
+					Text: "Max. item knapsack";
+					InitialData: 10;
+				}
 				Parameter p_itemRangeMin {
 					IndexDomain: (i_item);
 					Range: integer;
+					InitialData: 0;
 				}
 				Parameter p_itemRangeMax {
 					IndexDomain: (i_item);
 					Range: integer;
+					InitialData: 0;
+					webui::AnnotationsIdentifier: sp_maxRangeAnnotation;
+					webui::TooltipIdentifier: sp_maxRangeTooltip;
 				}
 				Parameter p_itemBound {
 					IndexDomain: (i_item);
 					Text: "No. of copies that is allowed";
 					Range: integer;
+					InitialData: 0;
 				}
 			}
 			Procedure pr_randomizeData {
 				Body: {
-					empty p_itemValue, p_itemWeight, p_itemBound;
+					empty p_itemValue, p_itemWeight, p_itemBound, p_itemRangeMax;
 					
-					p_itemValue(i_item) := uniform(0,200)*1[$];
-					p_itemWeight(i_item) := uniform(0[lb],p_maxWeightKnapsack/3);
-					p_itemBound(i_item) := ceil(uniform(0,10));
+					p_itemValue(i_item) := uniform(0, 200)*1[$];
+					p_itemWeight(i_item) := uniform(0[lb], p_maxWeightKnapsack/3);
+					p_itemBound(i_item) := ceil(uniform(0, 10));
+					
+					!not random
+					p_itemRangeMax(i_item) := 1;
+					sp_itemDescription(i_item) := i_item;
 				}
 			}
 		}
@@ -121,6 +136,9 @@ Model Main_Knapsack {
 			Constraint c_limitKnapsackWeight {
 				Unit: lb;
 				Definition: sum(i_item, v_inline_knapsackWeight(i_item)) <= p_maxWeightKnapsack;
+			}
+			Constraint c_limitKnapsackItem {
+				Definition: sum(i_item, v_knapsackItems(i_item)) <= p_maxItemKnapsack;
 			}
 			MathematicalProgram mp_knapsackModel {
 				Objective: v_knapsackTotalValue;
@@ -213,7 +231,7 @@ Model Main_Knapsack {
 					{ ( '1', '1', 'displayText'       ) : "Welcome"            ,  ( '1', '1', 'icon'              ) : "aimms-happy"        ,
 					  ( '1', '1', 'pageId'            ) : "home"               ,  ( '1', '1', 'tooltip'           ) : "welcome"            ,
 					  ( '1', '1', 'workflowPageState' ) : "active"             ,  ( '1', '1', 'pageDataState'     ) : "Incomplete"         ,
-					  ( '1', '1', 'redirectPageId'    ) : "home"               ,  ( '1', '2', 'displayText'       ) : "Story"              ,
+					  ( '1', '1', 'redirectPageId'    ) : ""               ,  ( '1', '2', 'displayText'       ) : "Story"              ,
 					  ( '1', '2', 'icon'              ) : "aimms-lamp5"        ,  ( '1', '2', 'pageId'            ) : "problem_description",
 					  ( '1', '2', 'tooltip'           ) : "Problem description",  ( '1', '2', 'workflowPageState' ) : "active"             ,
 					  ( '1', '2', 'pageDataState'     ) : "Incomplete"         ,  ( '1', '2', 'redirectPageId'    ) : "home"               ,
@@ -227,70 +245,67 @@ Model Main_Knapsack {
 				}
 			}
 		}
-		Section CRUD {
-			StringParameter sp_addEditElement;
-			Section CRUD_Items {
-				Procedure pr_openAddItem {
-					Body: {
-						empty sp_addEditElement;
-						
-						webui::OpenDialogPage(
-							pageId  :  'crud', 
-							title   :  "Add Items", 
-							actions :  s_loc_actions, 
-							onDone  :  'pr_addItem');
-					}
-					Set s_loc_actions {
-						InitialData: {
-							{'Cancel', 'OK'}
-						}
-					}
+		Section Status_Bar {
+			Procedure pr_changeVisibility {
+				Body: {
+					if bp_dense then
+					
+					    sp_statusBar('1', 'header') := "Visibility";
+					    sp_statusBar('1', 'icon') := "aimms-filter";
+					    sp_statusBar('1', 'color') := "#505767";
+					    sp_statusBar('1', 'text') := "Showing Sparse";
+					    sp_statusBar('1', 'tooltip') := "Click to change visibility";
+					    sp_statusBar('1', 'procedure') := "pr_changeVisibility";
+					    sp_statusBar('1', 'state') := "active";
+					
+					    bp_sparse := 1;
+					    bp_dense := 0;
+					
+					elseif bp_sparse then
+					
+					    sp_statusBar('1', 'header') := "Visibility";
+					    sp_statusBar('1', 'icon') := "aimms-filter2";
+					    sp_statusBar('1', 'color') := "#505767";
+					    sp_statusBar('1', 'text') := "Showing Dense";
+					    sp_statusBar('1', 'tooltip') := "Click to change visibility";
+					    sp_statusBar('1', 'procedure') := "pr_changeVisibility";
+					    sp_statusBar('1', 'state') := "active";
+					
+					    bp_sparse := 0;
+					    bp_dense := 1;
+					endif;
 				}
-				Procedure pr_addItem {
-					Arguments: sp_arg_action;
-					Body: {
-						if sp_arg_action = 'OK' then
-						    ep_selectedItem := StringToElement(s_items, sp_addEditElement, 1);
-						endif;
-					}
-					StringParameter sp_arg_action {
-						Property: Input;
-					}
+				Comment: "Showing Dense/ Showing Sparse/ Showing Inactives";
+			}
+			Procedure pr_setInitialStatusBar {
+				Body: {
+					empty sp_statusBar;
+					
+					sp_statusBar('1', 'header') := "Visibility";
+					sp_statusBar('1', 'icon') := "aimms-filter";
+					sp_statusBar('1', 'color') := "#505767";
+					sp_statusBar('1', 'text') := "Showing Sparse";
+					sp_statusBar('1', 'tooltip') := "Click to change visibility";
+					sp_statusBar('1', 'procedure') := "pr_changeVisibility";
+					sp_statusBar('1', 'state') := "active";
+					bp_sparse := 1;
 				}
-				Procedure pr_openEditItem {
-					Body: {
-						sp_addEditElement := ep_selectedItem;
-						
-						webui::OpenDialogPage(
-							pageId  :  'crud', 
-							title   :  "Edit Restaurant", 
-							actions :  s_loc_actions, 
-							onDone  :  'pr_editItem');
-					}
-					Set s_loc_actions {
-						InitialData: {
-							{'Cancel', 'OK'}
-						}
-					}
+			}
+			StringParameter sp_statusBar {
+				IndexDomain: (webui::indexApplicationExtension,webui::indexStatusBarSpec);
+				InitialData: {
+					data 
+					{ ( 1, header    ) : "Visibility"                ,  ( 1, icon      ) : "aimms-filter"              ,
+					  ( 1, color     ) : "red"                       ,  ( 1, text      ) : "Showing Inactive"          ,
+					  ( 1, tooltip   ) : "Click to change visibility",  ( 1, procedure ) : "pr_changeVisibility"       ,
+					  ( 1, state     ) : "active"                     }
 				}
-				Procedure pr_editItem {
-					Arguments: sp_arg_action;
-					Body: {
-						if sp_arg_action = 'OK' then
-						    SetElementRename(s_items, ep_selectedItem, sp_addEditElement);
-						endif;
-					}
-					StringParameter sp_arg_action {
-						Property: Input;
-					}
-				}
-				Procedure pr_deleteItem {
-					Body: {
-						s_items -= ep_selectedItem;
-						
-						ep_selectedItem := first(i_item);
-					}
-				}
+			}
+			Parameter bp_sparse {
+				InitialData: 0;
+			}
+			Parameter bp_dense {
+				InitialData: 0;
 			}
 		}
 		Section Pages {
@@ -313,51 +328,22 @@ Model Main_Knapsack {
 						  ( 6, procedure   ) : "pr_solveKnapsackModelBounded"  ,  ( 6, state       ) : "active"                         }
 					}
 				}
-				StringParameter sp_itemItemActions {
-					IndexDomain: (webui::indexWidgetItemActionSpec,webui::indexPageExtension,webui::indexWidgetActionSpec);
-					Definition: {
-						data 
-						{ ( p_itemBound       , 1, displaytext ) : "Add"            ,  ( p_itemBound       , 1, icon        ) : "aimms-plus3"    ,
-						  ( p_itemBound       , 1, procedure   ) : "pr_openAddItem" ,  ( p_itemBound       , 1, state       ) : "active"         ,
-						  ( p_itemBound       , 2, displaytext ) : "Edit"           ,  ( p_itemBound       , 2, icon        ) : "aimms-pencil2"  ,
-						  ( p_itemBound       , 2, procedure   ) : "pr_openEditItem",  ( p_itemBound       , 2, state       ) : "active"         ,
-						  ( p_itemBound       , 3, displaytext ) : "Delete"         ,  ( p_itemBound       , 3, icon        ) : "aimms-eraser2"  ,
-						  ( p_itemBound       , 3, procedure   ) : "pr_deleteItem"  ,  ( p_itemBound       , 3, state       ) : "active"         ,
-						  ( p_itemRangeMax    , 1, displaytext ) : "Add"            ,  ( p_itemRangeMax    , 1, icon        ) : "aimms-plus3"    ,
-						  ( p_itemRangeMax    , 1, procedure   ) : "pr_openAddItem" ,  ( p_itemRangeMax    , 1, state       ) : "active"         ,
-						  ( p_itemRangeMax    , 2, displaytext ) : "Edit"           ,  ( p_itemRangeMax    , 2, icon        ) : "aimms-pencil2"  ,
-						  ( p_itemRangeMax    , 2, procedure   ) : "pr_openEditItem",  ( p_itemRangeMax    , 2, state       ) : "active"         ,
-						  ( p_itemRangeMax    , 3, displaytext ) : "Delete"         ,  ( p_itemRangeMax    , 3, icon        ) : "aimms-eraser2"  ,
-						  ( p_itemRangeMax    , 3, procedure   ) : "pr_deleteItem"  ,  ( p_itemRangeMax    , 3, state       ) : "active"         ,
-						  ( p_itemRangeMin    , 1, displaytext ) : "Add"            ,  ( p_itemRangeMin    , 1, icon        ) : "aimms-plus3"    ,
-						  ( p_itemRangeMin    , 1, procedure   ) : "pr_openAddItem" ,  ( p_itemRangeMin    , 1, state       ) : "active"         ,
-						  ( p_itemRangeMin    , 2, displaytext ) : "Edit"           ,  ( p_itemRangeMin    , 2, icon        ) : "aimms-pencil2"  ,
-						  ( p_itemRangeMin    , 2, procedure   ) : "pr_openEditItem",  ( p_itemRangeMin    , 2, state       ) : "active"         ,
-						  ( p_itemRangeMin    , 3, displaytext ) : "Delete"         ,  ( p_itemRangeMin    , 3, icon        ) : "aimms-eraser2"  ,
-						  ( p_itemRangeMin    , 3, procedure   ) : "pr_deleteItem"  ,  ( p_itemRangeMin    , 3, state       ) : "active"         ,
-						  ( p_itemValue       , 1, displaytext ) : "Add"            ,  ( p_itemValue       , 1, icon        ) : "aimms-plus3"    ,
-						  ( p_itemValue       , 1, procedure   ) : "pr_openAddItem" ,  ( p_itemValue       , 1, state       ) : "active"         ,
-						  ( p_itemValue       , 2, displaytext ) : "Edit"           ,  ( p_itemValue       , 2, icon        ) : "aimms-pencil2"  ,
-						  ( p_itemValue       , 2, procedure   ) : "pr_openEditItem",  ( p_itemValue       , 2, state       ) : "active"         ,
-						  ( p_itemValue       , 3, displaytext ) : "Delete"         ,  ( p_itemValue       , 3, icon        ) : "aimms-eraser2"  ,
-						  ( p_itemValue       , 3, procedure   ) : "pr_deleteItem"  ,  ( p_itemValue       , 3, state       ) : "active"         ,
-						  ( p_itemWeight      , 1, displaytext ) : "Add"            ,  ( p_itemWeight      , 1, icon        ) : "aimms-plus3"    ,
-						  ( p_itemWeight      , 1, procedure   ) : "pr_openAddItem" ,  ( p_itemWeight      , 1, state       ) : "active"         ,
-						  ( p_itemWeight      , 2, displaytext ) : "Edit"           ,  ( p_itemWeight      , 2, icon        ) : "aimms-pencil2"  ,
-						  ( p_itemWeight      , 2, procedure   ) : "pr_openEditItem",  ( p_itemWeight      , 2, state       ) : "active"         ,
-						  ( p_itemWeight      , 3, displaytext ) : "Delete"         ,  ( p_itemWeight      , 3, icon        ) : "aimms-eraser2"  ,
-						  ( p_itemWeight      , 3, procedure   ) : "pr_deleteItem"  ,  ( p_itemWeight      , 3, state       ) : "active"         ,
-						  ( sp_itemDescription, 1, displaytext ) : "Add"            ,  ( sp_itemDescription, 1, icon        ) : "aimms-plus3"    ,
-						  ( sp_itemDescription, 1, procedure   ) : "pr_openAddItem" ,  ( sp_itemDescription, 1, state       ) : "active"         ,
-						  ( sp_itemDescription, 2, displaytext ) : "Edit"           ,  ( sp_itemDescription, 2, icon        ) : "aimms-pencil2"  ,
-						  ( sp_itemDescription, 2, procedure   ) : "pr_openEditItem",  ( sp_itemDescription, 2, state       ) : "active"         ,
-						  ( sp_itemDescription, 3, displaytext ) : "Delete"         ,  ( sp_itemDescription, 3, icon        ) : "aimms-eraser2"  ,
-						  ( sp_itemDescription, 3, procedure   ) : "pr_deleteItem"  ,  ( sp_itemDescription, 3, state       ) : "active"          }
-					}
+				StringParameter sp_maxRangeTooltip {
+					Definition: "This idenfifier may change after the run.";
+				}
+				StringParameter sp_maxRangeAnnotation {
+					Definition: "different";
 				}
 			}
 			Section Results_Page {
 				DeclarationSection Result_Side_Panel {
+					Set s_def_filteredItems {
+						SubsetOf: s_items;
+						Index: i_fitem;
+						Definition: {
+							{i_item | p_itemFilter(i_item)}
+						}
+					}
 					StringParameter sp_resultsSidePanel {
 						IndexDomain: (webui::indexPageExtension,webui::indexSidePanelSpec);
 						Definition: {
@@ -389,6 +375,17 @@ Model Main_Knapsack {
 								v_knapsackItems(i_item),
 								round(p_itemValue(i_item), 2),
 								round(v_inline_knapsackValue(i_item), 2))
+						}
+					}
+					Parameter p_dom_knapsackResult {
+						IndexDomain: i_item;
+						Definition: {
+							1 $ (!used by status bar visualization
+							    (v_knapsackItems(i_item)
+							    and v_inline_knapsackValue(i_item)
+							    and bp_dense)
+							    or 
+							    bp_sparse)
 						}
 					}
 				}
@@ -468,7 +465,7 @@ Model Main_Knapsack {
 				block !	ReadSingleValue Import
 				axll::SelectSheet("Knapsack");
 				
-				axll::ReadSingleValue(p_maxItems, "B1");
+				axll::ReadSingleValue(p_maxItemKnapsack, "B1");
 				axll::ReadSingleValue(p_maxWeightKnapsack, "B2");
 				
 				endblock;
@@ -523,7 +520,7 @@ Model Main_Knapsack {
 				axll::CreateSheet("Knapsack", "Item");
 				
 				axll::WriteSingleValue(sp_loc_maxItemsTitle, "A1");
-				axll::WriteSingleValue(p_maxItems, "B1");
+				axll::WriteSingleValue(p_maxItemKnapsack, "B1");
 				
 				axll::WriteSingleValue(sp_loc_maxWeightKnapsackTitle, "A2");
 				axll::WriteSingleValue(p_maxWeightKnapsack, "B2");
@@ -588,6 +585,9 @@ Model Main_Knapsack {
 		}
 	}
 	Procedure MainInitialization {
+		Body: {
+			pr_setInitialStatusBar;
+		}
 		Comment: "Add initialization statements here that do NOT require any library being initialized already.";
 	}
 	Procedure PostMainInitialization {

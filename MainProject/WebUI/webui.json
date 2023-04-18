@@ -77,6 +77,30 @@
         ]
       }
     },
+    "statusmessages": {
+      "aimms": {
+        "contents": [
+          "sp_statusBar"
+        ],
+        "slices": [
+          {
+            "identifier": "sp_statusBar",
+            "slice": [
+              {
+                "index": "webui::indexApplicationExtension",
+                "type": "free",
+                "value": "webui::indexApplicationExtension"
+              },
+              {
+                "index": "webui::indexStatusBarSpec",
+                "type": "free",
+                "value": "webui::indexStatusBarSpec"
+              }
+            ]
+          }
+        ]
+      }
+    },
     "theme.classic": {
       "literal": "NOT_ALLOWED"
     },
@@ -267,14 +291,19 @@
     "bindings": {
       "literal": [
         {
+          "widgetUri": "scl_maxWeightKnapsack_1",
+          "gridArea": "area-d",
+          "dndId": "Unassigned widgetsscl_maxWeightKnapsack_13"
+        },
+        {
           "widgetUri": "scl_maxWeightKnapsack",
           "gridArea": "area-c",
-          "dndId": "area-bscl_maxWeightKnapsack1"
+          "dndId": "area-cscl_maxWeightKnapsack0"
         },
         {
           "widgetUri": "sld_maxItems",
           "gridArea": "area-b",
-          "dndId": "area-bsld_maxItems0"
+          "dndId": "area-bsld_maxItems1"
         },
         {
           "widgetUri": "tbl_items",
@@ -328,6 +357,13 @@
         },
         {
           "uri": "sld_maxItems",
+          "layoutInfo": {
+            "width": "2",
+            "height": "1"
+          }
+        },
+        {
+          "uri": "scl_maxWeightKnapsack_1",
           "layoutInfo": {
             "width": "2",
             "height": "1"
@@ -399,11 +435,6 @@
           "widgetUri": "mslc_multiselectFilter",
           "gridArea": "area-c",
           "dndId": "area-cmslc_multiselectFilter0"
-        },
-        {
-          "widgetUri": "dasdas",
-          "gridArea": "area-c",
-          "dndId": "Unassigned widgetsdasdas5"
         },
         {
           "widgetUri": "cmb_results",
@@ -501,7 +532,7 @@
     "axis.y.0.max": {
       "aimms": {
         "contents": [
-          "p_maxItems"
+          "p_maxItemKnapsack"
         ],
         "slices": []
       }
@@ -526,6 +557,9 @@
         ]
       }
     },
+    "contents.numdecimals": {
+      "literal": 0
+    },
     "contents.partition": {
       "literal": {
         "header": [],
@@ -545,7 +579,7 @@
       "literal": false
     },
     "data.labels.show": {
-      "literal": false
+      "literal": true
     },
     "indices.__display_order__": {
       "literal": [
@@ -613,7 +647,7 @@
       "literal": false
     },
     "data.labels.show": {
-      "literal": false
+      "literal": true
     },
     "indices.__display_order__": {
       "literal": [
@@ -628,14 +662,6 @@
     },
     "title": {
       "literal": "per Weight"
-    }
-  },
-  "widgets/dasdas": {
-    "aimms.widget.type": {
-      "literal": "selectionbox-v2"
-    },
-    "name": {
-      "literal": "dasdas"
     }
   },
   "widgets/img_homeLogo": {
@@ -707,6 +733,27 @@
       "literal": 1
     }
   },
+  "widgets/scl_maxWeightKnapsack_1": {
+    "aimms.widget.type": {
+      "literal": "scalar"
+    },
+    "contents": {
+      "aimms": {
+        "contents": [
+          "p_maxItemKnapsack"
+        ]
+      }
+    },
+    "contents.numdecimals": {
+      "literal": 0
+    },
+    "name": {
+      "literal": "scl_maxItemKnapsack"
+    },
+    "show.units": {
+      "literal": 1
+    }
+  },
   "widgets/scl_modelInformation": {
     "aimms.widget.type": {
       "literal": "scalar"
@@ -754,7 +801,7 @@
     "contents": {
       "aimms": {
         "contents": [
-          "p_maxItems"
+          "p_itemQuantity"
         ]
       }
     },
@@ -768,7 +815,7 @@
       "literal": 0
     },
     "name": {
-      "literal": "sld_maxItems"
+      "literal": "sld_itemQuantity"
     },
     "step": {
       "literal": 1
@@ -809,35 +856,6 @@
           "<IDENTIFIER-SET>"
         ],
         "aggregated": []
-      }
-    },
-    "contextmenu": {
-      "aimms": {
-        "contents": [
-          "sp_itemItemActions"
-        ],
-        "slices": [
-          {
-            "identifier": "sp_itemItemActions",
-            "slice": [
-              {
-                "index": "webui::indexWidgetItemActionSpec",
-                "type": "free",
-                "value": "webui::indexWidgetItemActionSpec"
-              },
-              {
-                "index": "webui::indexPageExtension",
-                "type": "free",
-                "value": "webui::indexPageExtension"
-              },
-              {
-                "index": "webui::indexWidgetActionSpec",
-                "type": "free",
-                "value": "webui::indexWidgetActionSpec"
-              }
-            ]
-          }
-        ]
       }
     },
     "custom.column.widths": {
@@ -912,13 +930,49 @@
         "contents": [
           "v_knapsackItems",
           "v_inline_knapsackValue"
+        ],
+        "prefix": "aimms",
+        "partition": {
+          "rowHeader": [
+            "i_item"
+          ],
+          "colHeader": [
+            "<IDENTIFIER-SET>"
+          ],
+          "aggregated": []
+        },
+        "displaydomain": {
+          "v_knapsackitems": "p_dom_knapsackResult(i_item)",
+          "v_inline_knapsackvalue": "p_dom_knapsackResult(i_item)"
+        },
+        "slices": [
+          {
+            "identifier": "v_inline_knapsackValue",
+            "slice": [
+              {
+                "index": "i_item",
+                "type": "subset",
+                "value": "i_fitem"
+              }
+            ]
+          },
+          {
+            "identifier": "v_knapsackItems",
+            "slice": [
+              {
+                "index": "i_item",
+                "type": "subset",
+                "value": "i_fitem"
+              }
+            ]
+          }
         ]
       }
     },
     "contents.displaydomain": {
       "literal": {
-        "v_knapsackitems": "p_itemFilter(i_item)",
-        "v_inline_knapsackvalue": "p_itemFilter(i_item)"
+        "v_knapsackitems": "p_dom_knapsackResult(i_item)",
+        "v_inline_knapsackvalue": "p_dom_knapsackResult(i_item)"
       }
     },
     "contents.partition": {
@@ -954,6 +1008,11 @@
             "<IDENTIFIER-SET>": "v_inline_knapsackValue"
           },
           "width": 23.75
+        },
+        {
+          "type": "rowHeader",
+          "colKey": "i_fitem",
+          "width": 18.56
         }
       ]
     },
@@ -966,7 +1025,7 @@
       "literal": "text"
     },
     "contents": {
-      "literal": "<div><span style=\"font-size: 32px;\"><b>Story</b></span></div><div><br></div><div><span style=\"font-size: 18px;\">This example introduces a knapsack problem. The example considers a data set of 16 items which can be included in the knapsack. </span></div><div><span style=\"font-size: 18px;\">The objective is to maximize the cumulated value of the items. The number of items is restricted by the maximum weight that can be carried in the knapsack.</span></div><div><br></div><div><span style=\"font-size: 18px;\">In the classical knapsack problem, each item can be chosen only once. This example also considers variants of the problem in which the number of equal items is unlimited or limited to certain integers.</span></div><div><br></div><div><br></div>"
+      "literal": "<div><span style=\"font-size: 32px;\"><b>Story</b></span></div><div><br></div><div><span style=\"font-size: 18px;\">This example introduces a knapsack problem. </span></div><div><br></div><div><span style=\"font-size: 18px;\">Data to this example can be added by:</span></div><ul><li><b style=\"font-size: 18px;\">Importing the Excel file</b><span style=\"font-size: 18px;\"> with a data set of 14 items that can be included in the knapsack and its weight values.</span></li><li><span style=\"font-size: 18px;\"> Create a new scenario by selecting in the slide widget a number of items and then </span><b style=\"font-size: 18px;\">generating random values</b><span style=\"font-size: 18px;\"> for weight and bounds.&nbsp;</span></li></ul><div><span style=\"font-size: 18px;\">&nbsp;</span></div><div><span style=\"font-size: 18px;\">The objective is to maximize the cumulated value of the items. The number of items is restricted by the maximum weight and items that can be carried in the knapsack.</span></div><div><br></div><div><span style=\"font-size: 18px;\">In the classical knapsack problem, each item can be chosen only once. This example also considers variants of the problem in which the number of equal items is unlimited or limited to certain integers.</span></div><div><br></div><div><br></div>"
     },
     "name": {
       "literal": "txt_problemDescription"

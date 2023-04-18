@@ -9,6 +9,21 @@ html:not(.using-touch) .tag-table .grid-viewport .cell:not(.flag-readOnly) {
   color: var(--primaryDark);
 }
 
+/*Link color*/
+.ql-snow a {  
+  color: var(--primaryDark) !important;
+}
+
+/*Change table default text color*/
+.tag-table .grid-viewport .cell.flag-default, 
+html:not(.using-touch) .tag-table .grid-viewport .cell.flag-default {
+    color: white;
+}
+
 .tag-slider .slider-value {
+  color: var(--primaryDark);
+}
+
+.status-message.clickable:hover .status-display-text{
   color: var(--primaryDark);
 }

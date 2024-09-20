@@ -4,6 +4,27 @@
     "aimms.widget.type": {
       "literal": "application"
     },
+    "browser.language": {
+      "aimms": {
+        "contents": [
+          "webui::ClientBrowserLanguage"
+        ]
+      }
+    },
+    "browser.name": {
+      "aimms": {
+        "contents": [
+          "webui::ClientBrowserName"
+        ]
+      }
+    },
+    "browser.timezone": {
+      "aimms": {
+        "contents": [
+          "webui::BrowserTimeZone"
+        ]
+      }
+    },
     "browsername": {
       "aimms": {
         "contents": [
@@ -597,6 +618,9 @@
     },
     "title": {
       "literal": "per Quantity"
+    },
+    "views": {
+      "literal": {}
     }
   },
   "widgets/cmb_weightResults": {
@@ -662,6 +686,9 @@
     },
     "title": {
       "literal": "per Weight"
+    },
+    "views": {
+      "literal": {}
     }
   },
   "widgets/img_homeLogo": {
@@ -731,6 +758,9 @@
     },
     "show.units": {
       "literal": 1
+    },
+    "views": {
+      "literal": {}
     }
   },
   "widgets/scl_maxWeightKnapsack_1": {
@@ -752,6 +782,9 @@
     },
     "show.units": {
       "literal": 1
+    },
+    "views": {
+      "literal": {}
     }
   },
   "widgets/scl_modelInformation": {
@@ -772,6 +805,9 @@
     },
     "name": {
       "literal": "scl_modelInformation"
+    },
+    "views": {
+      "literal": {}
     }
   },
   "widgets/scl_totals": {
@@ -792,6 +828,9 @@
     },
     "title": {
       "literal": "Totals"
+    },
+    "views": {
+      "literal": {}
     }
   },
   "widgets/sld_maxItems": {
@@ -819,6 +858,9 @@
     },
     "step": {
       "literal": 1
+    },
+    "views": {
+      "literal": {}
     }
   },
   "widgets/tbl_items": {
@@ -919,6 +961,9 @@
     },
     "title": {
       "literal": "Item Information"
+    },
+    "views": {
+      "literal": {}
     }
   },
   "widgets/tbl_knapsackItems": {
@@ -1018,6 +1063,9 @@
     },
     "name": {
       "literal": "tbl_knapsackItems"
+    },
+    "views": {
+      "literal": {}
     }
   },
   "widgets/txt_problemDescription": {
@@ -1025,7 +1073,7 @@
       "literal": "text"
     },
     "contents": {
-      "literal": "<div><span style=\"font-size: 32px;\"><b>Story</b></span></div><div><br></div><div><span style=\"font-size: 18px;\">This example introduces a knapsack problem. </span></div><div><br></div><div><span style=\"font-size: 18px;\">Data to this example can be added by:</span></div><ul><li><b style=\"font-size: 18px;\">Importing the Excel file</b><span style=\"font-size: 18px;\"> with a data set of 14 items that can be included in the knapsack and its weight values.</span></li><li><span style=\"font-size: 18px;\"> Create a new scenario by selecting in the slide widget a number of items and then </span><b style=\"font-size: 18px;\">generating random values</b><span style=\"font-size: 18px;\"> for weight and bounds.&nbsp;</span></li></ul><div><span style=\"font-size: 18px;\">&nbsp;</span></div><div><span style=\"font-size: 18px;\">The objective is to maximize the cumulated value of the items. The number of items is restricted by the maximum weight and items that can be carried in the knapsack.</span></div><div><br></div><div><span style=\"font-size: 18px;\">In the classical knapsack problem, each item can be chosen only once. This example also considers variants of the problem in which the number of equal items is unlimited or limited to certain integers.</span></div><div><br></div><div><br></div>"
+      "literal": "<div><b><span style=\"font-size: 32px;\">Story</span></b></div><div><br></div><div><span style=\"font-size: 18px;\">This example introduces a knapsack problem. </span></div><div><br></div><div><span style=\"font-size: 18px;\">Data to this example can be added by:</span></div><ul><li><b style=\"font-size: 18px;\">Imp</b><span style=\"font-size: 18px;\"><b>o</b></span><b style=\"font-size: 18px;\">rti</b><span style=\"font-size: 18px;\"><b>n</b></span><b style=\"font-size: 18px;\">g the Excel f</b><span style=\"font-size: 18px;\"><b>i</b></span><b style=\"font-size: 18px;\">l</b><span style=\"font-size: 18px;\"><b>e</b> with a data set of 14 items that can be included in the knapsack and its weight values.</span></li><li><span style=\"font-size: 18px;\"> Create a new scenario by selecting in the slide widget a number of items and then </span><b style=\"font-size: 18px;\">generating random values</b><span style=\"font-size: 18px;\"> for weight and bounds.&nbsp;</span></li></ul><div><span style=\"font-size: 18px;\">&nbsp;</span></div><div><span style=\"font-size: 18px;\">The objective is to maximize the cumulated value of the items. The number of items is restricted by the maximum weight and items that can be carried in the knapsack.</span></div><div><br></div><div><span style=\"font-size: 18px;\">In the classical knapsack problem, each item can be chosen only once. This example also considers variants of the problem in which the number of equal items is unlimited or limited to certain integers.</span></div><div><br></div><div><br></div><div><br></div>"
     },
     "name": {
       "literal": "txt_problemDescription"

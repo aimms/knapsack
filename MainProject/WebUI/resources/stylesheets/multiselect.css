@@ -1,7 +1,0 @@
-.tag-multiselect-widget .searchable-list li.active .checkbox:before{
-  border: 1px solid var(--primary);
-  background: var(--primary);
-}
-.awf-select-actions>div {
-  color: var(--primary);
-}

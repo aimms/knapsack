@@ -11,7 +11,13 @@
 ----------------------------------------------------------------------*/
   --bg_app-logo: 15px 50% / 30px 30px no-repeat url(/app-resources/resources/images/knapsack-logo.png);
   --spacing_app-logo_width: 45px;
+  --color_border_app-header-divider: var(--primaryDark); /*line color after header*/
 
+  --color_bg_app-canvas: url(/app-resources/resources/images/RightBackground.png) rgb(249, 249, 249) no-repeat left/contain; /*background color*/
+  --color_bg_widget-header: #95551141; /*widget header background color*/
+  --border_widget-header: 2px solid var(--primaryDark); /*line color after widget header*/
+
+  --color_text_edit-select-link: var(--primaryDark);
   --color_bg_button_primary: var(--primaryDark);
   --color_bg_button_primary_hover: var(--primary);
   --color_text_edit-select-link: var(--primaryDark);
@@ -48,4 +54,5 @@
   /* Icon background, border, for non-error state */
   --color_bg_workflow-icon: #ffffff;
   --color_workflow-icon-border: var(--primaryDark);
+
 }

@@ -1,0 +1,12 @@
+/*Link color*/
+.ql-snow a {  
+  color: var(--primaryDark) !important;
+}
+
+.tag-slider .slider-value {
+  color: var(--primaryDark);
+}
+
+.status-message.clickable:hover .status-display-text{
+  color: var(--primaryDark);
+}

@@ -1,7 +1,9 @@
 ## ams_version=1.0
 
 Model Main_Knapsack {
+	Comment: "Main model for the Knapsack problem application, containing data definitions, optimization logic, and UI support.";
 	Section Data_Model {
+		Comment: "Contains all data structures, including units, parameters, and the mathematical optimization model.";
 		Section Quantities_and_Units {
 			Comment: {
 				"This section contains all the units and quantities that are added automatically by AIMMS.
@@ -28,6 +30,7 @@ Model Main_Knapsack {
 			}
 			Quantity q_monetary {
 				BaseUnit: $;
+				Comment: "Quantity representing monetary values in US dollars.";
 			}
 			Quantity SI_Unitless {
 				BaseUnit: -;
@@ -36,50 +39,61 @@ Model Main_Knapsack {
 			}
 		}
 		Section Inputs {
+			Comment: "This section contains the input data and logic for the knapsack problem.";
 			Section Items {
+				Comment: "Declaration of items and their associated properties like value, weight, and quantities.";
 				Set s_items {
 					Index: i_item;
 					Parameter: ep_selectedItem;
 					Definition: ElementRange(1, p_itemQuantity, prefix:"item-", fill:1);
+					Comment: "Set of all items available to be placed in the knapsack. Elements are automatically generated.";
 				}
 				StringParameter sp_itemDescription {
 					IndexDomain: i_item;
 					InitialData: "";
+					Comment: "Human-readable description for each item used in UI displays.";
 				}
 				Parameter p_itemQuantity {
 					Text: "No. of items";
 					Range: integer;
 					InitialData: 14;
+					Comment: "The total number of unique items considered in the knapsack problem.";
 				}
 				Parameter p_itemValue {
 					IndexDomain: (i_item);
 					Text: "Price of the item";
 					Unit: $;
 					Default: 0;
+					Comment: "The monetary value associated with each unit of the item.";
 				}
 				Parameter p_itemWeight {
 					IndexDomain: (i_item);
 					Unit: lb;
 					InitialData: 0;
+					Comment: "The weight of each unit of the item in pounds.";
 				}
 				Parameter p_maxWeightKnapsack {
 					Text: "Max. weight knapsack";
 					Unit: lb;
 					InitialData: 60;
+					Comment: "The total weight capacity of the knapsack.";
 				}
 				Parameter p_maxItemKnapsack {
 					Text: "Max. item knapsack";
 					InitialData: 10;
+					Comment: "The maximum number of items that can be placed in the knapsack.";
 				}
 				Parameter p_itemRangeMin {
 					IndexDomain: (i_item);
 					Range: integer;
 					InitialData: 0;
+					Comment: "The minimum number of copies for each item.";
 				}
 				Parameter p_itemRangeMax {
 					IndexDomain: (i_item);
 					Range: integer;
 					InitialData: 0;
+					Comment: "The maximum number of copies for each item.";
 					webui::AnnotationsIdentifier: sp_maxRangeAnnotation;
 					webui::TooltipIdentifier: sp_maxRangeTooltip;
 				}
@@ -88,34 +102,42 @@ Model Main_Knapsack {
 					Text: "No. of copies that is allowed";
 					Range: integer;
 					InitialData: 0;
+					Comment: "Defined bound for the number of copies allowed for each item.";
 				}
 			}
 			Procedure pr_randomizeData {
 				Body: {
+					! Clear existing item data to ensure a fresh randomization
 					empty p_itemValue, p_itemWeight, p_itemBound, p_itemRangeMax;
 					
+					! Assign random values to item properties
 					p_itemValue(i_item) := uniform(0, 200)*1[$];
 					p_itemWeight(i_item) := uniform(0[lb], p_maxWeightKnapsack/3);
 					p_itemBound(i_item) := ceil(uniform(0, 10));
 					
+					! Set fixed properties (not random)
 					!not random
 					p_itemRangeMax(i_item) := 1;
 					sp_itemDescription(i_item) := i_item;
 				}
+				Comment: "Generates random input data for the knapsack problem.";
 			}
 		}
 		Section Math_Model {
+			Comment: "Definition of variables, constraints, and the mathematical program for the knapsack problem.";
 			Variable v_knapsackItems {
 				IndexDomain: i_item;
 				Text: "Item i is placed in knapsack";
 				Range: {
 					{p_itemRangeMin(i_item)..p_itemRangeMax(i_item)}
 				}
+				Comment: "Integer decision variable representing the number of copies of item i included in the knapsack.";
 				webui::TooltipIdentifier: sp_tooltipPerQuantity(i_item);
 			}
 			Variable v_knapsackTotalValue {
 				Unit: $;
 				Definition: sum(i_item, v_inline_knapsackValue(i_item));
+				Comment: "The total value of all items selected for the knapsack.";
 			}
 			Variable v_inline_knapsackValue {
 				IndexDomain: i_item;
@@ -125,44 +147,55 @@ Model Main_Knapsack {
 					v_knapsackItems(i_item) 
 					* p_itemValue(i_item)
 				}
+				Comment: "Inline calculation of the value for each item based on the selected quantity.";
 			}
 			Variable v_inline_knapsackWeight {
 				IndexDomain: i_item;
 				Range: nonnegative;
 				Unit: lb;
 				Definition: v_knapsackItems(i_item) * p_itemWeight(i_item);
+				Comment: "Inline calculation of the weight for each item based on the selected quantity.";
 				webui::TooltipIdentifier: sp_tooltipPerWeight(i_item);
 			}
 			Constraint c_limitKnapsackWeight {
 				Unit: lb;
 				Definition: sum(i_item, v_inline_knapsackWeight(i_item)) <= p_maxWeightKnapsack;
+				Comment: "Constraint ensuring the total weight does not exceed the knapsack capacity.";
 			}
 			Constraint c_limitKnapsackItem {
 				Definition: sum(i_item, v_knapsackItems(i_item)) <= p_maxItemKnapsack;
+				Comment: "Constraint limiting the total number of items in the knapsack.";
 			}
 			MathematicalProgram mp_knapsackModel {
 				Objective: v_knapsackTotalValue;
 				Direction: maximize;
 				Type: MIP;
+				Comment: "The mathematical program specification for the MIP-based knapsack optimization.";
 			}
 			DeclarationSection Model_Information {
+				Comment: "Identifiers used to store the results and performance metrics of the optimization run.";
 				ElementParameter ep_programStatus {
 					Range: AllSolutionStates;
+					Comment: "The result state of the mathematical program (e.g., Optimal, Infeasible).";
 					webui::FlagsIdentifier: sp_readOnlyFlag;
 				}
 				Parameter p_gap {
 					Unit: %;
+					Comment: "The optimality gap of the MIP solution.";
 					webui::FlagsIdentifier: sp_readOnlyFlag;
 				}
 				Parameter p_numberOfConstraints {
+					Comment: "The total number of constraints in the generated model.";
 					webui::FlagsIdentifier: sp_readOnlyFlag;
 				}
 				Parameter p_numberOfVariables {
+					Comment: "The total number of variables in the generated model.";
 					webui::FlagsIdentifier: sp_readOnlyFlag;
 				}
 				Parameter p_solutionTime {
 					Unit: s;
 					InitialData: 0;
+					Comment: "The time taken by the solver to reach a solution.";
 					webui::FlagsIdentifier: sp_readOnlyFlag;
 				}
 			}
@@ -170,9 +203,11 @@ Model Main_Knapsack {
 				Body: {
 					/* Standard model allows at most 1 copy of each item */
 					
+					! Configure the range for the 0-1 knapsack problem
 					p_itemRangeMin(i_item) := 0;
 					p_itemRangeMax(i_item) := 1;
 					
+					! Handle solve logic based on environment (Local vs PRO)
 					if pro::GetPROEndPoint() then
 					    if pro::management::IsRunningOnCloud() then
 						    pro::solverlease::solveModel(
@@ -183,8 +218,10 @@ Model Main_Knapsack {
 					    solve mp_knapsackModel;
 					endif;
 					
+					! Collect results and update result filters
 					pr_modelInformation;
 				}
+				Comment: "Solves the standard knapsack model where each item can be selected at most once (0-1 knapsack problem).";
 			}
 			Procedure pr_solveKnapsackModelUnBounded {
 				Body: {
@@ -205,14 +242,17 @@ Model Main_Knapsack {
 					
 					pr_modelInformation;
 				}
+				Comment: "Solves the unbounded knapsack model where an unlimited number of copies for each item can be selected.";
 			}
 			Procedure pr_solveKnapsackModelBounded {
 				Body: {
 					/* Standard model allows at most a specific no of copies of each item */
 					
+					! Apply the item-specific bounds provided by the user
 					p_itemRangeMin(i_item) := 0;
 					p_itemRangeMax(i_item) := p_itemBound(i_item);
 					
+					! Solve routine with standard PRO environment check
 					if pro::GetPROEndPoint() then
 					    if pro::management::IsRunningOnCloud() then
 						    pro::solverlease::solveModel(
@@ -223,29 +263,37 @@ Model Main_Knapsack {
 					    solve mp_knapsackModel;
 					endif;
 					
+					! Finalize results capture
 					pr_modelInformation;
 				}
+				Comment: "Solves the bounded knapsack model where the number of copies for each item is restricted by p_itemBound.";
 			}
 			Procedure pr_modelInformation {
 				Body: {
+					! Clear old model info data
 					empty Model_Information;
 					
+					! Map solver attributes to output parameters
 					ep_programStatus := mp_knapsackModel.ProgramStatus;
 					p_gap := abs(1 - (mp_knapsackModel.Objective/$mp_knapsackModel.BestBound));
 					p_solutionTime := mp_knapsackModel.SolutionTime;
 					p_numberOfConstraints := mp_knapsackModel.NumberOfConstraints;
 					p_numberOfVariables := mp_knapsackModel.NumberOfVariables;
 					
+					! Reset visibility filter to show all items
 					p_itemFilter(i_item) := 1;
 				}
+				Comment: "Retrieves result statistics from the mathematical program after a solve.";
 			}
 		}
 	}
 	Section UI_Declarations {
+		Comment: "Contains identifiers and procedures related to the WebUI layout and status bar.";
 		StringParameter sp_logo {
 			Definition: "aimms_logo.png";
 		}
 		Section Workflow {
+			Comment: "Defines the workflow steps and navigation for the WebUI.";
 			StringParameter sp_myWorkflows {
 				IndexDomain: (webui::indexWorkflowOrder,webui::indexWorkflowSpec);
 			}
@@ -261,15 +309,12 @@ Model Main_Knapsack {
 					  ( '1', '2', 'pageDataState'     ) : "Incomplete"         ,  ( '1', '2', 'redirectPageId'    ) : "home"               ,
 					  ( '1', '3', 'displayText'       ) : "Inputs"             ,  ( '1', '3', 'icon'              ) : "aimms-equalizer2"   ,
 					  ( '1', '3', 'pageId'            ) : "inputs"             ,  ( '1', '3', 'tooltip'           ) : "Input data"         ,
-					  ( '1', '3', 'workflowPageState' ) : "active"             ,  ( '1', '3', 'pageDataState'     ) : "Incomplete"         ,
-					  ( '1', '3', 'redirectPageId'    ) : "home"               ,  ( '1', '4', 'displayText'       ) : "Results"            ,
-					  ( '1', '4', 'icon'              ) : "aimms-make-group"   ,  ( '1', '4', 'pageId'            ) : "results"            ,
-					  ( '1', '4', 'tooltip'           ) : "Model outputs"      ,  ( '1', '4', 'workflowPageState' ) : if (not p_numberOfConstraints) then "inactive" else "active" endif,
-					  ( '1', '4', 'pageDataState'     ) : "Incomplete"         ,  ( '1', '4', 'redirectPageId'    ) : "home"                }
+					  ( '1', '3', 'workflowPageState' ) : "active"             ,  ( '1', '3', 'pageDataState'     ) : "Incomplete"         ,  ( '1', '3', 'redirectPageId'    ) : "home"               ,  ( '1', '4', 'displayText'       ) : "Results"            ,  ( '1', '4', 'icon'              ) : "aimms-make-group"   ,  ( '1', '4', 'pageId'            ) : "results"            ,  ( '1', '4', 'tooltip'           ) : "Model outputs"      ,  ( '1', '4', 'workflowPageState' ) : if (not p_numberOfConstraints) then "inactive" else "active" endif,  ( '1', '4', 'pageDataState'     ) : "Incomplete"         ,  ( '1', '4', 'redirectPageId'    ) : "home"                }
 				}
 			}
 		}
 		Section Status_Bar {
+			Comment: "Contains procedures and parameters for managing the WebUI status bar.";
 			Procedure pr_changeVisibility {
 				Body: {
 					if bp_dense then
@@ -314,6 +359,7 @@ Model Main_Knapsack {
 					sp_statusBar('1', 'state') := "active";
 					bp_sparse := 1;
 				}
+				Comment: "Initializes the status bar with default visibility settings.";
 			}
 			StringParameter sp_statusBar {
 				IndexDomain: (webui::indexApplicationExtension,webui::indexStatusBarSpec);
@@ -324,16 +370,21 @@ Model Main_Knapsack {
 					  ( 1, tooltip   ) : "Click to change visibility",  ( 1, procedure ) : "pr_changeVisibility"       ,
 					  ( 1, state     ) : "active"                     }
 				}
+				Comment: "String parameter to configure the status bar elements in the WebUI.";
 			}
 			Parameter bp_sparse {
 				InitialData: 0;
+				Comment: "Boolean parameter indicating if sparse view is active.";
 			}
 			Parameter bp_dense {
 				InitialData: 0;
+				Comment: "Boolean parameter indicating if dense view is active.";
 			}
 		}
 		Section Pages {
+			Comment: "Contains declarations related to specific pages in the WebUI.";
 			Section Inputs_Page {
+				Comment: "Declarations specific to the 'Inputs' page of the WebUI.";
 				StringParameter sp_inputsSecondaryActions {
 					IndexDomain: (webui::indexPageExtension,webui::indexPageActionSpec);
 					Definition: {
@@ -351,22 +402,28 @@ Model Main_Knapsack {
 						  ( 6, displaytext ) : "Solve Bounded"                 ,  ( 6, icon        ) : "aimms-cogs"                    ,
 						  ( 6, procedure   ) : "pr_solveKnapsackModelBounded"  ,  ( 6, state       ) : "active"                         }
 					}
+					Comment: "Defines the secondary actions available on the Inputs page, such as import, export, and solve options.";
 				}
 				StringParameter sp_maxRangeTooltip {
 					Definition: "This idenfifier may change after the run.";
+					Comment: "Tooltip for the maximum range input field.";
 				}
 				StringParameter sp_maxRangeAnnotation {
 					Definition: "different";
+					Comment: "Annotation for the maximum range input field.";
 				}
 			}
 			Section Results_Page {
+				Comment: "Declarations specific to the 'Results' page of the WebUI.";
 				DeclarationSection Result_Side_Panel {
+					Comment: "Identifiers used for the results side panel in the WebUI.";
 					Set s_def_filteredItems {
 						SubsetOf: s_items;
 						Index: i_fitem;
 						Definition: {
 							{i_item | p_itemFilter(i_item)}
 						}
+						Comment: "Subset of items displayed in the results, based on a filter.";
 					}
 					StringParameter sp_resultsSidePanel {
 						IndexDomain: (webui::indexPageExtension,webui::indexSidePanelSpec);
@@ -377,9 +434,11 @@ Model Main_Knapsack {
 							  ( 2, displayText ) : "Model Information",  ( 2, pageId      ) : "model_information",
 							  ( 2, icon        ) : "aimms-info"       ,  ( 2, state       ) : "active"            }
 						}
+						Comment: "Configuration for the results side panel, including KPIs and model information.";
 					}
 					Parameter p_itemFilter {
 						IndexDomain: i_item;
+						Comment: "Filter parameter to control which items are displayed in the results.";
 					}
 					StringParameter sp_tooltipPerWeight {
 						IndexDomain: i_item | v_inline_knapsackWeight(i_item);
@@ -390,6 +449,7 @@ Model Main_Knapsack {
 								round(p_itemWeight(i_item), 2),
 								round(v_inline_knapsackWeight(i_item), 2))
 						}
+						Comment: "Tooltip displaying the weight calculation for each item.";
 					}
 					StringParameter sp_tooltipPerQuantity {
 						IndexDomain: i_item | v_inline_knapsackWeight(i_item);
@@ -400,6 +460,7 @@ Model Main_Knapsack {
 								round(p_itemValue(i_item), 2),
 								round(v_inline_knapsackValue(i_item), 2))
 						}
+						Comment: "Tooltip displaying the value calculation for each item.";
 					}
 					Parameter p_dom_knapsackResult {
 						IndexDomain: i_item;
@@ -411,28 +472,36 @@ Model Main_Knapsack {
 							    or 
 							    bp_sparse)
 						}
+						Comment: "Domain parameter used for filtering knapsack results based on visibility settings.";
 					}
 				}
 			}
 		}
 		Section FlagsIdentifier {
+			Comment: "Contains string parameters used as flags for WebUI components.";
 			StringParameter sp_readOnlyFlag {
 				Definition: "readonly";
+				Comment: "Flag to indicate that a WebUI component should be read-only.";
 			}
 		}
 	}
 	Section Integration {
+		Comment: "Contains parameters and procedures for Excel data integration.";
 		StringParameter sp_wbName {
 			Definition: "Knapsack Data.xlsx";
+			Comment: "The name of the Excel workbook used for data integration.";
 		}
 		Procedure pr_readAll {
 			Body: {
+				! Check and close the workbook if it's already open to avoid conflicts
 				if axll::WorkBookIsOpen(sp_wbName) then
 				    axll::CloseWorkBook(sp_wbName);
 				endif;    
 				
+				! Initialize AXLL connection to the input workbook
 				axll::OpenWorkBook(sp_wbName);
 				
+				! Import item-level data in a discrete block
 				block ! ReadTable Import
 				axll::SelectSheet("Item");
 				p_loc_lastRow := axll::LastUsedRowNumber;
@@ -486,6 +555,7 @@ Model Main_Knapsack {
 					MergeWithExistingData  :  0);	
 				endblock;
 				
+				! Import global scalar values
 				block !	ReadSingleValue Import
 				axll::SelectSheet("Knapsack");
 				
@@ -494,16 +564,22 @@ Model Main_Knapsack {
 				
 				endblock;
 				
+				! Close all open handles
 				axll::CloseAllWorkBooks;
 			}
-			Parameter p_loc_lastRow;
+			Comment: "Reads all input data from the specified Excel workbook.";
+			Parameter p_loc_lastRow {
+				Comment: "Local temporary parameter to store the last used row number in Excel.";
+			}
 		}
 		Procedure pr_writeAll {
 			Body: {
+				! Ensure the target workbook is clean for write operations
 				if axll::WorkBookIsOpen(sp_wbName) then
 				    axll::CloseWorkBook(sp_wbName);
 				endif;    
 				
+				! Initialize local titles for Excel headers
 				sp_loc_itemTitle := "Items";
 				sp_loc_itemValueTitle := "Value";
 				sp_loc_itemWeightTitle := "Weight";
@@ -514,6 +590,7 @@ Model Main_Knapsack {
 				sp_loc_maxItemsTitle := "Max. Items";
 				sp_loc_maxWeightKnapsackTitle := "Max. Weight";
 				
+				! Identify the set of attributes to be exported
 				s_loc_identifiers 
 				:=  {'sp_itemDescription',
 				    'p_itemValue', 
@@ -522,6 +599,7 @@ Model Main_Knapsack {
 				    'p_itemRangeMax', 
 				    'p_itemBound'};
 				
+				! Create a composite data table in the 'Item' sheet
 				block ! WriteCompositeTable Export
 				axll::CreateNewWorkBook(sp_wbName, "Item");
 				
@@ -540,6 +618,7 @@ Model Main_Knapsack {
 				axll::WriteSingleValue(sp_loc_itemBoundTitle, "G1");
 				endblock;
 				
+				! Write individual model parameters to a separate sheet
 				block ! WriteSingleValue Export
 				axll::CreateSheet("Knapsack", "Item");
 				
@@ -550,21 +629,44 @@ Model Main_Knapsack {
 				axll::WriteSingleValue(p_maxWeightKnapsack, "B2");
 				endblock;
 				
+				! Flush changes and close
 				axll::CloseAllWorkBooks;
 			}
-			Set s_loc_identifiers;
-			StringParameter sp_loc_itemTitle;
-			StringParameter sp_loc_itemValueTitle;
-			StringParameter sp_loc_itemWeightTitle;
-			StringParameter sp_loc_itemRangeMinTitle;
-			StringParameter sp_loc_itemRangeMaxTitle;
-			StringParameter sp_loc_itemBoundTitle;
-			StringParameter sp_loc_itemDescriptionTitle;
-			StringParameter sp_loc_maxItemsTitle;
-			StringParameter sp_loc_maxWeightKnapsackTitle;
+			Comment: "Exports results and input data to the specified Excel workbook.";
+			Set s_loc_identifiers {
+				Comment: "Subset of identifiers selected for Excel export.";
+			}
+			StringParameter sp_loc_itemTitle {
+				Comment: "Title for items column in Excel.";
+			}
+			StringParameter sp_loc_itemValueTitle {
+				Comment: "Title for values column in Excel.";
+			}
+			StringParameter sp_loc_itemWeightTitle {
+				Comment: "Title for weights column in Excel.";
+			}
+			StringParameter sp_loc_itemRangeMinTitle {
+				Comment: "Title for range minimum in Excel.";
+			}
+			StringParameter sp_loc_itemRangeMaxTitle {
+				Comment: "Title for range maximum in Excel.";
+			}
+			StringParameter sp_loc_itemBoundTitle {
+				Comment: "Title for item bound in Excel.";
+			}
+			StringParameter sp_loc_itemDescriptionTitle {
+				Comment: "Title for item description in Excel.";
+			}
+			StringParameter sp_loc_maxItemsTitle {
+				Comment: "Title for max items in Excel.";
+			}
+			StringParameter sp_loc_maxWeightKnapsackTitle {
+				Comment: "Title for max weight in Excel.";
+			}
 		}
 		Procedure pr_dev_axllWriteExamples {
 			Body: {
+				! Ensure clean state for diagnostic export
 				if axll::WorkBookIsOpen(sp_wbName) then
 				    axll::CloseWorkBook(sp_wbName);
 				endif;    
@@ -572,6 +674,7 @@ Model Main_Knapsack {
 				sp_loc_itemTitle := "Items";
 				sp_loc_itemValueTitle := "Value";
 				
+				! Demonstrate standard WriteTable functionality
 				block ! WriteTable Export 
 				axll::CreateNewWorkBook(sp_wbName, "WriteTable");
 				axll::SelectSheet("WriteTable");
@@ -586,6 +689,7 @@ Model Main_Knapsack {
 				axll::WriteSingleValue(sp_loc_itemValueTitle, "B1");
 				endblock;
 				
+				! Demonstrate faster optimized WriteTableQuick method
 				block ! WriteTableQuick Export
 				axll::CreateSheet("WriteTableQuick", "WriteTable");
 				
@@ -604,8 +708,13 @@ Model Main_Knapsack {
 				
 				axll::CloseAllWorkBooks;
 			}
-			StringParameter sp_loc_itemTitle;
-			StringParameter sp_loc_itemValueTitle;
+			Comment: "Example procedure to demonstrate different AXLL write methods.";
+			StringParameter sp_loc_itemTitle {
+				Comment: "Local title for items demonstration.";
+			}
+			StringParameter sp_loc_itemValueTitle {
+				Comment: "Local title for values demonstration.";
+			}
 		}
 	}
 	Procedure MainInitialization {
@@ -620,7 +729,9 @@ Model Main_Knapsack {
 			or add statements that require the Data Management module to be initialized."
 		}
 	}
-	Procedure MainExecution;
+	Procedure MainExecution {
+		Comment: "Main execution procedure of the model.";
+	}
 	Procedure PreMainTermination {
 		Body: {
 			return DataManagementExit();

@@ -227,9 +227,11 @@ Model Main_Knapsack {
 				Body: {
 					/* Standard model allows at most a specific no of copies of each item */
 					
+					! Configure unbounded limits for knapsack items
 					p_itemRangeMin(i_item) := 0;
 					p_itemRangeMax(i_item) := inf;
 					
+					! Solve routine based on environment
 					if pro::GetPROEndPoint() then
 					    if pro::management::IsRunningOnCloud() then
 						    pro::solverlease::solveModel(
@@ -291,11 +293,13 @@ Model Main_Knapsack {
 		Comment: "Contains identifiers and procedures related to the WebUI layout and status bar.";
 		StringParameter sp_logo {
 			Definition: "aimms_logo.png";
+			Comment: "File name for the application logo.";
 		}
 		Section Workflow {
 			Comment: "Defines the workflow steps and navigation for the WebUI.";
 			StringParameter sp_myWorkflows {
 				IndexDomain: (webui::indexWorkflowOrder,webui::indexWorkflowSpec);
+				Comment: "Configuration parameter for WebUI workflows.";
 			}
 			StringParameter sp_myWorkflowSteps {
 				IndexDomain: (webui::indexWorkflowOrder,webui::indexNoOfPages,webui::indexWorkflowPageSpec);
@@ -311,6 +315,7 @@ Model Main_Knapsack {
 					  ( '1', '3', 'pageId'            ) : "inputs"             ,  ( '1', '3', 'tooltip'           ) : "Input data"         ,
 					  ( '1', '3', 'workflowPageState' ) : "active"             ,  ( '1', '3', 'pageDataState'     ) : "Incomplete"         ,  ( '1', '3', 'redirectPageId'    ) : "home"               ,  ( '1', '4', 'displayText'       ) : "Results"            ,  ( '1', '4', 'icon'              ) : "aimms-make-group"   ,  ( '1', '4', 'pageId'            ) : "results"            ,  ( '1', '4', 'tooltip'           ) : "Model outputs"      ,  ( '1', '4', 'workflowPageState' ) : if (not p_numberOfConstraints) then "inactive" else "active" endif,  ( '1', '4', 'pageDataState'     ) : "Incomplete"         ,  ( '1', '4', 'redirectPageId'    ) : "home"                }
 				}
+				Comment: "Configuration parameter for the WebUI workflow steps.";
 			}
 		}
 		Section Status_Bar {
@@ -319,6 +324,7 @@ Model Main_Knapsack {
 				Body: {
 					if bp_dense then
 					
+					    ! Toggle to sparse view
 					    sp_statusBar('1', 'header') := "Visibility";
 					    sp_statusBar('1', 'icon') := "aimms-filter";
 					    sp_statusBar('1', 'color') := "#505767";
@@ -332,6 +338,7 @@ Model Main_Knapsack {
 					
 					elseif bp_sparse then
 					
+					    ! Toggle to dense view
 					    sp_statusBar('1', 'header') := "Visibility";
 					    sp_statusBar('1', 'icon') := "aimms-filter2";
 					    sp_statusBar('1', 'color') := "#505767";
@@ -348,8 +355,10 @@ Model Main_Knapsack {
 			}
 			Procedure pr_setInitialStatusBar {
 				Body: {
+					! Clear visibility status
 					empty sp_statusBar;
 					
+					! Set default to showing sparse
 					sp_statusBar('1', 'header') := "Visibility";
 					sp_statusBar('1', 'icon') := "aimms-filter";
 					sp_statusBar('1', 'color') := "#505767";
@@ -719,21 +728,29 @@ Model Main_Knapsack {
 	}
 	Procedure MainInitialization {
 		Body: {
+			! Setup initial UI status
 			pr_setInitialStatusBar;
 		}
 		Comment: "Add initialization statements here that do NOT require any library being initialized already.";
 	}
 	Procedure PostMainInitialization {
+		Body: {
+			! No specific post-initialization logic required
+		}
 		Comment: {
 			"Add initialization statements here that require that the libraries are already initialized properly,
 			or add statements that require the Data Management module to be initialized."
 		}
 	}
 	Procedure MainExecution {
+		Body: {
+			! No specific main execution logic required
+		}
 		Comment: "Main execution procedure of the model.";
 	}
 	Procedure PreMainTermination {
 		Body: {
+			! Execute data management exit sequence
 			return DataManagementExit();
 		}
 		Comment: {
@@ -744,6 +761,7 @@ Model Main_Knapsack {
 	}
 	Procedure MainTermination {
 		Body: {
+			! Allow termination sequence to continue
 			return 1;
 		}
 		Comment: {

@@ -1,9 +1,9 @@
 # Knapsack Problem 
 
 [![Downloads](https://img.shields.io/github/downloads/aimms/knapsack/total?style=for-the-badge&logo=github&labelColor=000081&color=1847c9)](https://github.com/aimms/knapsack/releases)
-![AIMMS Version](https://img.shields.io/badge/AIMMS-24.5-white?style=for-the-badge&labelColor=009B00&color=00D400)
-![WebUI Version](https://img.shields.io/badge/WebUI-24.10.3.3-white?style=for-the-badge&labelColor=009B00&color=00D400)
-![Excel Integration](https://img.shields.io/badge/AXLL-24.0.0.2-white?style=for-the-badge&labelColor=009B00&color=00D400)
+![AIMMS Version](https://img.shields.io/badge/AIMMS-25.9-white?style=for-the-badge&labelColor=009B00&color=00D400)
+![WebUI Version](https://img.shields.io/badge/WebUI-26.2.1.1-white?style=for-the-badge&labelColor=009B00&color=00D400)
+![Excel Integration](https://img.shields.io/badge/AXLL-25.1.1.1-white?style=for-the-badge&labelColor=009B00&color=00D400)
 
 This repository contains a functional AIMMS example for the classic **Knapsack Problem**. It demonstrates how to select an optimal subset of items to maximize total value without exceeding the maximum weight capacity of the knapsack.
 
